@@ -25,6 +25,8 @@ export const AdminCandidatos: React.FC = () => {
     plancha_id: '',
     foto: '' as string | null,
   });
+  const [formError, setFormError] = useState('');
+  const [isUploading, setIsUploading] = useState(false);
 
   useEffect(() => {
     const isAdmin = localStorage.getItem('isAdmin');
@@ -56,29 +58,52 @@ export const AdminCandidatos: React.FC = () => {
   const handlePhotoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      setIsUploading(true);
+      setFormError('');
       try {
         const photoUrl = await candidatoService.uploadPhoto(file);
         setFormData({ ...formData, foto: photoUrl });
-      } catch (err) {
+      } catch (err: any) {
         console.error('Error uploading photo:', err);
+        setFormError(
+          'No se pudo subir la foto. Esto ocurre porque el almacenamiento (bucket) "candidate-photos" no está creado o configurado en tu Supabase. Como alternativa, puedes ingresar el enlace/URL de la imagen de Google abajo.'
+        );
+      } finally {
+        setIsUploading(false);
       }
     }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setFormError('');
     try {
       if (editingCandidato) {
-        await candidatoService.updateCandidato(editingCandidato.id, formData);
+        await candidatoService.updateCandidato(editingCandidato.id, {
+          nombre: formData.nombre,
+          cargo_id: formData.cargo_id,
+          plancha_id: formData.plancha_id,
+          foto: formData.foto,
+        });
       } else {
-        await candidatoService.createCandidato(formData);
+        await candidatoService.createCandidato({
+          nombre: formData.nombre,
+          cargo_id: formData.cargo_id,
+          plancha_id: formData.plancha_id,
+          foto: formData.foto,
+        });
       }
       setShowModal(false);
       setEditingCandidato(null);
       setFormData({ nombre: '', cargo_id: '', plancha_id: '', foto: null });
       loadData();
-    } catch (err) {
+    } catch (err: any) {
       console.error('Error saving candidato:', err);
+      if (err.message && err.message.includes('unique')) {
+        setFormError('Ya existe un candidato registrado para este cargo en esta plancha.');
+      } else {
+        setFormError(err.message || 'Error al guardar el candidato. Intente nuevamente.');
+      }
     }
   };
 
@@ -200,6 +225,11 @@ export const AdminCandidatos: React.FC = () => {
         size="lg"
       >
         <form onSubmit={handleSubmit} className="space-y-4">
+          {formError && (
+            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+              {formError}
+            </div>
+          )}
           <div className="space-y-2">
             <label className="block text-sm font-medium text-gray-700">Foto del Candidato</label>
             <div className="flex items-center space-x-4 p-3 bg-gray-50 rounded-lg border border-gray-200">
@@ -211,12 +241,12 @@ export const AdminCandidatos: React.FC = () => {
                 </div>
               )}
               <div className="flex flex-col gap-2">
-                <label className="cursor-pointer self-start">
+                <label className={`cursor-pointer self-start ${isUploading ? 'pointer-events-none opacity-50' : ''}`}>
                   <span className="inline-flex items-center px-3 py-1.5 border border-gray-300 rounded-md shadow-sm text-xs font-medium text-gray-700 bg-white hover:bg-gray-50">
                     <Upload className="w-3.5 h-3.5 mr-1.5" />
-                    Subir Imagen
+                    {isUploading ? 'Subiendo...' : 'Subir Imagen'}
                   </span>
-                  <input type="file" accept="image/*" onChange={handlePhotoChange} className="hidden" />
+                  <input type="file" accept="image/*" onChange={handlePhotoChange} className="hidden" disabled={isUploading} />
                 </label>
                 {formData.foto && (
                   <button 
