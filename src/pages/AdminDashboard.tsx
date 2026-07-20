@@ -5,7 +5,7 @@ import { Card, CardContent } from '../components/ui/Card';
 import { LoadingSpinner } from '../components/ui/LoadingSpinner';
 import { votoService } from '../services/votoService';
 import type { DashboardStats } from '../types';
-import { Users, Vote, TrendingUp, Power, Settings, BarChart3, UserPlus, Users2, LogOut } from 'lucide-react';
+import { Users, Vote, TrendingUp, Power, Settings, BarChart3, UserPlus, Users2, LogOut, RefreshCw } from 'lucide-react';
 
 export const AdminDashboard: React.FC = () => {
   const navigate = useNavigate();
@@ -36,6 +36,26 @@ export const AdminDashboard: React.FC = () => {
   const handleLogout = () => {
     localStorage.removeItem('isAdmin');
     navigate('/');
+  };
+
+  const handleResetElection = async () => {
+    const confirmed = window.confirm(
+      '¡ATENCIÓN! Esta acción eliminará permanentemente TODOS los votos registrados y restablecerá a todos los votantes para que puedan votar nuevamente. Esta acción NO se puede deshacer.\n\n¿Está seguro de que desea reiniciar la elección?'
+    );
+    
+    if (confirmed) {
+      setIsLoading(true);
+      try {
+        await votoService.resetElection();
+        alert('La elección ha sido reiniciada con éxito. Todos los votos fueron eliminados.');
+        await loadStats();
+      } catch (err) {
+        console.error('Error resetting election:', err);
+        alert('Ocurrió un error al reiniciar la elección. Por favor intente nuevamente.');
+      } finally {
+        setIsLoading(false);
+      }
+    }
   };
 
   if (isLoading) {
@@ -222,6 +242,24 @@ export const AdminDashboard: React.FC = () => {
                 <div>
                   <h3 className="font-bold text-gray-900 text-lg">Resultados</h3>
                   <p className="text-sm text-gray-600">Ver resultados en tiempo real</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* New Reset Election Action Card */}
+          <Card 
+            className="bg-red-500/10 hover:bg-red-500/20 backdrop-blur-xl border border-red-500/25 cursor-pointer hover:scale-105 transition-all duration-300"
+            onClick={handleResetElection}
+          >
+            <CardContent className="p-6">
+              <div className="flex items-center space-x-4">
+                <div className="w-14 h-14 bg-gradient-to-br from-red-500 to-rose-600 rounded-xl flex items-center justify-center shadow-lg shadow-red-500/20">
+                  <RefreshCw className="w-7 h-7 text-white" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-red-200 text-lg">Reiniciar Elección</h3>
+                  <p className="text-sm text-red-300/80">Borrar todos los votos actuales</p>
                 </div>
               </div>
             </CardContent>

@@ -96,4 +96,22 @@ export const votoService = {
       estado_eleccion: election.data?.estado || 'cerrada',
     };
   },
+
+  async resetElection(): Promise<void> {
+    // 1. Eliminar todos los votos de la tabla
+    const { error: errVotos } = await supabase
+      .from('votos')
+      .delete()
+      .neq('id', '00000000-0000-0000-0000-000000000000');
+
+    if (errVotos) throw errVotos;
+
+    // 2. Restablecer el estado de todos los votantes a 'ya_voto = false'
+    const { error: errVotantes } = await supabase
+      .from('votantes')
+      .update({ ya_voto: false })
+      .neq('id', '00000000-0000-0000-0000-000000000000');
+
+    if (errVotantes) throw errVotantes;
+  },
 };
