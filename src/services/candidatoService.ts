@@ -5,7 +5,7 @@ export const candidatoService = {
   async getAllCandidatos(): Promise<Candidato[]> {
     const { data, error } = await supabase
       .from('candidatos')
-      .select('*, cargo(*), plancha(*)')
+      .select('*, cargo:cargos(*), plancha:planchas(*)')
       .order('created_at', { ascending: true });
 
     if (error) throw error;
@@ -15,7 +15,7 @@ export const candidatoService = {
   async getCandidatosByCargo(cargoId: string): Promise<Candidato[]> {
     const { data, error } = await supabase
       .from('candidatos')
-      .select('*, cargo(*), plancha(*)')
+      .select('*, cargo:cargos(*), plancha:planchas(*)')
       .eq('cargo_id', cargoId)
       .order('created_at', { ascending: true });
 
@@ -26,7 +26,7 @@ export const candidatoService = {
   async getCandidatoById(id: string): Promise<Candidato | null> {
     const { data, error } = await supabase
       .from('candidatos')
-      .select('*, cargo(*), plancha(*)')
+      .select('*, cargo:cargos(*), plancha:planchas(*)')
       .eq('id', id)
       .single();
 
@@ -38,7 +38,7 @@ export const candidatoService = {
     const { data, error } = await supabase
       .from('candidatos')
       .insert(candidato)
-      .select('*, cargo(*), plancha(*)')
+      .select('*, cargo:cargos(*), plancha:planchas(*)')
       .single();
 
     if (error) throw error;
@@ -50,7 +50,7 @@ export const candidatoService = {
       .from('candidatos')
       .update(updates)
       .eq('id', id)
-      .select('*, cargo(*), plancha(*)')
+      .select('*, cargo:cargos(*), plancha:planchas(*)')
       .single();
 
     if (error) throw error;

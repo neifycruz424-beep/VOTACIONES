@@ -191,20 +191,43 @@ export const AdminCandidatos: React.FC = () => {
         size="lg"
       >
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Foto</label>
-            <div className="flex items-center space-x-4">
-              {formData.foto && (
-                <img src={formData.foto} alt="Preview" className="w-20 h-20 rounded-full object-cover" />
+          <div className="space-y-2">
+            <label className="block text-sm font-medium text-gray-700">Foto del Candidato</label>
+            <div className="flex items-center space-x-4 p-3 bg-gray-50 rounded-lg border border-gray-200">
+              {formData.foto ? (
+                <img src={formData.foto} alt="Preview" className="w-16 h-16 rounded-full object-cover border border-gray-300 shadow-sm" />
+              ) : (
+                <div className="w-16 h-16 rounded-full bg-gray-200 flex items-center justify-center border border-gray-300 shadow-sm">
+                  <span className="text-gray-400 text-xs">Sin Foto</span>
+                </div>
               )}
-              <label className="cursor-pointer">
-                <span className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
-                  <Upload className="w-4 h-4 mr-2" />
-                  Subir Foto
-                </span>
-                <input type="file" accept="image/*" onChange={handlePhotoChange} className="hidden" />
-              </label>
+              <div className="flex flex-col gap-2">
+                <label className="cursor-pointer self-start">
+                  <span className="inline-flex items-center px-3 py-1.5 border border-gray-300 rounded-md shadow-sm text-xs font-medium text-gray-700 bg-white hover:bg-gray-50">
+                    <Upload className="w-3.5 h-3.5 mr-1.5" />
+                    Subir Imagen
+                  </span>
+                  <input type="file" accept="image/*" onChange={handlePhotoChange} className="hidden" />
+                </label>
+                {formData.foto && (
+                  <button 
+                    type="button" 
+                    onClick={() => setFormData({ ...formData, foto: null })}
+                    className="text-xs text-red-600 hover:text-red-800 text-left font-medium"
+                  >
+                    Eliminar foto
+                  </button>
+                )}
+              </div>
             </div>
+            
+            <Input
+              label="O enlace/URL de la imagen (ej: de Google o Unsplash)"
+              placeholder="https://ejemplo.com/foto.jpg"
+              value={formData.foto || ''}
+              onChange={(e) => setFormData({ ...formData, foto: e.target.value || null })}
+              className="text-sm"
+            />
           </div>
 
           <Input

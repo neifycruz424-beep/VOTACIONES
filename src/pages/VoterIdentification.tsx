@@ -4,35 +4,56 @@ import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 import { Card, CardContent, CardHeader } from '../components/ui/Card';
 import { votanteService } from '../services/votanteService';
-import { User, ArrowLeft, Shield } from 'lucide-react';
+import { User, ArrowLeft, Shield, Fingerprint, Sparkles } from 'lucide-react';
 
 export const VoterIdentification: React.FC = () => {
   const navigate = useNavigate();
-  const [codigo, setCodigo] = useState('');
+  const [nombre, setNombre] = useState('');
+  const [cedula, setCedula] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    
+    const cleanNombre = nombre.trim();
+    const cleanCedula = cedula.trim().replace(/[^0-9a-zA-Z]/g, ''); // Remove spaces, dashes, etc.
+
+    if (!cleanNombre) {
+      setError('Por favor ingrese su nombre completo');
+      return;
+    }
+
+    if (!cleanCedula) {
+      setError('Por favor ingrese su número de identificación (Cédula)');
+      return;
+    }
+
     setIsLoading(true);
 
     try {
-      const voter = await votanteService.getVotanteByCode(codigo);
+      // Find the voter by ID (codigo)
+      let voter = await votanteService.getVotanteByCode(cleanCedula);
       
-      if (!voter) {
-        setError('Código de votante no encontrado');
-        return;
-      }
-
-      if (voter.ya_voto) {
-        setError('Usted ya ejerció su derecho al voto');
-        return;
+      if (voter) {
+        if (voter.ya_voto) {
+          setError('El votante con esta identificación ya ejerció su derecho al voto');
+          setIsLoading(false);
+          return;
+        }
+      } else {
+        // Auto-register the voter dynamically if they don't exist
+        voter = await votanteService.createVotante({
+          nombre: cleanNombre,
+          codigo: cleanCedula,
+          ya_voto: false
+        });
       }
 
       navigate('/votar/candidatos', { state: { votante: voter } });
     } catch (err) {
-      setError('Error al validar el código. Por favor intente nuevamente.');
+      setError('Error al procesar la identificación. Intente de nuevo.');
       console.error(err);
     } finally {
       setIsLoading(false);
@@ -40,68 +61,109 @@ export const VoterIdentification: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-800 flex items-center justify-center p-4 relative overflow-hidden">
-      {/* Animated background elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-pulse"></div>
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-pink-500 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-pulse" style={{ animationDelay: '1s' }}></div>
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-slate-900 flex items-center justify-center p-4 relative overflow-hidden">
+      {/* Decorative radial gradients for modern look */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-1/4 left-1/4 w-[400px] h-[400px] bg-blue-500/10 rounded-full blur-[100px] animate-pulse"></div>
+        <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-indigo-500/10 rounded-full blur-[100px] animate-pulse" style={{ animationDelay: '1.5s' }}></div>
       </div>
 
-      <Card className="max-w-md w-full bg-white/95 backdrop-blur-xl shadow-2xl border-0 relative z-10">
-        <CardHeader className="pb-6">
-          <div className="flex items-center gap-3 mb-4">
+      <Card className="max-w-md w-full bg-slate-900/60 backdrop-blur-xl border border-white/10 shadow-2xl relative z-10 text-white rounded-2xl overflow-hidden">
+        <div className="h-2 bg-gradient-to-r from-blue-600 via-indigo-500 to-red-500"></div>
+        
+        <CardHeader className="pb-4 pt-8 px-8 border-b border-white/5">
+          <div className="flex items-center justify-between mb-4">
             <Button
               variant="outline"
               size="sm"
               onClick={() => navigate('/')}
-              className="border-gray-300"
+              className="border-white/10 text-slate-300 hover:text-white hover:bg-white/5 hover:border-white/20 transition-all"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
-              Volver
+              Inicio
             </Button>
-          </div>
-          <div className="flex items-center justify-center mb-4">
-            <div className="w-16 h-16 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-full flex items-center justify-center shadow-lg">
-              <User className="w-8 h-8 text-white" />
+            <div className="flex items-center gap-1.5 px-3 py-1 bg-blue-500/10 text-blue-400 rounded-full text-xs font-semibold border border-blue-500/20">
+              <Shield className="w-3.5 h-3.5" />
+              Conexión Encriptada
             </div>
           </div>
-          <h2 className="text-3xl font-bold text-center bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-            Identificación
-          </h2>
-          <p className="text-center text-gray-600 mt-2">
-            Ingrese su código de votante para continuar
-          </p>
+          
+          <div className="text-center mt-6">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-full mb-4 shadow-lg shadow-blue-500/15">
+              <Fingerprint className="w-8 h-8 text-white" />
+            </div>
+            <h2 className="text-2xl font-bold tracking-tight text-white flex items-center justify-center gap-2">
+              Identificación de Elector
+            </h2>
+            <p className="text-slate-400 text-sm mt-1.5">
+              Ingrese su nombre y cédula para habilitar su boleta
+            </p>
+          </div>
         </CardHeader>
-        <CardContent>
+
+        <CardContent className="p-8">
+          {error && (
+            <div className="bg-red-500/10 border border-red-500/25 text-red-200 px-4 py-3 rounded-xl mb-6 text-sm flex items-center gap-3 animate-headShake">
+              <div className="w-2 h-2 rounded-full bg-red-500 animate-ping"></div>
+              <span>{error}</span>
+            </div>
+          )}
+
           <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="relative">
-              <Input
-                label="Código de Votante"
-                placeholder="Ingrese su código único"
-                value={codigo}
-                onChange={(e) => setCodigo(e.target.value)}
-                error={error}
-                disabled={isLoading}
-                autoFocus
-                className="text-lg"
-              />
-              <div className="absolute right-3 top-9">
-                <Shield className="w-5 h-5 text-gray-400" />
+            <div className="space-y-1.5">
+              <label className="block text-sm font-semibold text-slate-300">
+                Nombre Completo
+              </label>
+              <div className="relative">
+                <Input
+                  placeholder="Escriba su nombre y apellido"
+                  value={nombre}
+                  onChange={(e) => setNombre(e.target.value)}
+                  disabled={isLoading}
+                  autoFocus
+                  required
+                  className="bg-slate-950/60 border-white/10 text-white placeholder-slate-500 focus:ring-blue-500 focus:border-transparent py-3 pl-10"
+                />
+                <div className="absolute left-3.5 top-3.5 pointer-events-none">
+                  <User className="w-5 h-5 text-slate-500" />
+                </div>
+              </div>
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="block text-sm font-semibold text-slate-300">
+                Cédula / Identificación
+              </label>
+              <div className="relative">
+                <Input
+                  placeholder="Ej: 001-0000000-0"
+                  value={cedula}
+                  onChange={(e) => setCedula(e.target.value)}
+                  disabled={isLoading}
+                  required
+                  className="bg-slate-950/60 border-white/10 text-white placeholder-slate-500 focus:ring-blue-500 focus:border-transparent py-3 pl-10"
+                />
+                <div className="absolute left-3.5 top-3.5 pointer-events-none">
+                  <Fingerprint className="w-5 h-5 text-slate-500" />
+                </div>
               </div>
             </div>
 
             <Button
               type="submit"
-              className="w-full py-4 text-lg bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+              disabled={isLoading || !nombre.trim() || !cedula.trim()}
+              className="w-full py-4.5 text-base font-semibold text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 shadow-xl shadow-blue-600/10 hover:shadow-blue-500/20 active:scale-[0.98] transition-all duration-300 rounded-xl"
               isLoading={isLoading}
-              disabled={!codigo.trim()}
             >
-              Validar Código
+              Habilitar Boleta
             </Button>
 
-            <p className="text-center text-sm text-gray-500">
-              Su información está protegida y es confidencial
-            </p>
+            <div className="pt-4 border-t border-white/5 text-center">
+              <p className="text-xs text-slate-500 flex items-center justify-center gap-1.5">
+                <Sparkles className="w-3.5 h-3.5 text-yellow-500/70" />
+                El voto es secreto, seguro y auditado
+              </p>
+            </div>
           </form>
         </CardContent>
       </Card>

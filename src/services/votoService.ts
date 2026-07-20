@@ -19,7 +19,7 @@ export const votoService = {
   async getVotesByCargo(cargoId: string): Promise<Voto[]> {
     const { data, error } = await supabase
       .from('votos')
-      .select('*, candidato(*), cargo(*)')
+      .select('*, candidato:candidatos(*), cargo:cargos(*)')
       .eq('cargo_id', cargoId);
 
     if (error) throw error;
@@ -29,7 +29,7 @@ export const votoService = {
   async getAllVotes(): Promise<Voto[]> {
     const { data, error } = await supabase
       .from('votos')
-      .select('*, candidato(*), cargo(*), votante(*)')
+      .select('*, candidato:candidatos(*), cargo:cargos(*), votante:votantes(*)')
       .order('fecha', { ascending: false });
 
     if (error) throw error;

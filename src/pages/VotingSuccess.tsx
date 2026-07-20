@@ -2,53 +2,62 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '../components/ui/Button';
 import { Card, CardContent } from '../components/ui/Card';
-import { CheckCircle, Sparkles, Home } from 'lucide-react';
+import { CheckCircle2, Sparkles, Home, ShieldCheck } from 'lucide-react';
 
 export const VotingSuccess: React.FC = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-800 flex items-center justify-center p-4 relative overflow-hidden">
-      {/* Animated background elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-pulse"></div>
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-pink-500 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-pulse" style={{ animationDelay: '1s' }}></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-green-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse" style={{ animationDelay: '2s' }}></div>
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-slate-900 flex items-center justify-center p-4 relative overflow-hidden text-white">
+      {/* Decorative background blur elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-1/4 left-1/4 w-[400px] h-[400px] bg-emerald-500/5 rounded-full blur-[100px] animate-pulse"></div>
+        <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-blue-500/5 rounded-full blur-[100px] animate-pulse" style={{ animationDelay: '1.5s' }}></div>
       </div>
 
-      <Card className="max-w-md w-full bg-white/95 backdrop-blur-xl shadow-2xl border-0 relative z-10">
-        <CardContent className="p-12 text-center">
+      <Card className="max-w-md w-full bg-slate-900/60 backdrop-blur-xl border border-white/10 shadow-2xl relative z-10 text-white rounded-2xl overflow-hidden">
+        {/* Glowing top success border line */}
+        <div className="h-2 bg-gradient-to-r from-emerald-500 via-teal-500 to-blue-500"></div>
+
+        <CardContent className="p-10 text-center">
           <div className="mb-8">
-            <div className="inline-flex items-center justify-center w-24 h-24 bg-gradient-to-br from-green-500 to-emerald-500 rounded-full mb-6 shadow-lg animate-bounce">
-              <CheckCircle className="w-12 h-12 text-white" />
+            <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-full mb-6 shadow-xl shadow-emerald-500/20 animate-bounce">
+              <CheckCircle2 className="w-10 h-10 text-white" />
             </div>
-            <div className="flex items-center justify-center gap-2 mb-4">
-              <Sparkles className="w-6 h-6 text-yellow-500" />
-              <h1 className="text-4xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
-                ¡Voto Registrado!
+            
+            <div className="flex items-center justify-center gap-1.5 mb-3">
+              <Sparkles className="w-5 h-5 text-yellow-500" />
+              <h1 className="text-3xl font-black bg-gradient-to-b from-white to-slate-200 bg-clip-text text-transparent">
+                ¡Voto Transmitido!
               </h1>
-              <Sparkles className="w-6 h-6 text-yellow-500" />
+              <Sparkles className="w-5 h-5 text-yellow-500" />
             </div>
-            <p className="text-xl text-gray-700 font-medium">
-              Gracias por participar en el proceso electoral
+            
+            <p className="text-slate-400 text-sm">
+              Su participación en el proceso electoral ha concluido con éxito
             </p>
           </div>
 
-          <div className="space-y-6">
-            <p className="text-gray-600 leading-relaxed">
-              Su voto ha sido registrado correctamente y ya no puede ser modificado. Su participación es fundamental para el futuro de nuestra organización.
+          <div className="space-y-6 mb-8 bg-slate-950/20 p-5 rounded-xl border border-white/5">
+            <p className="text-slate-300 text-sm leading-relaxed">
+              Su boleta ha sido procesada de manera anónima y encriptada en la base de datos central. El sistema ha cerrado su sesión de elector para evitar duplicaciones.
             </p>
 
-            <div className="pt-6">
-              <Button
-                size="lg"
-                onClick={() => navigate('/')}
-                className="w-full px-12 py-4 text-lg bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
-              >
-                <Home className="w-5 h-5 mr-2" />
-                Volver al Inicio
-              </Button>
+            <div className="flex items-center justify-center gap-2 text-xs font-semibold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 py-2 rounded-lg">
+              <ShieldCheck className="w-4 h-4" />
+              Sufragio Auditado & Asegurado
             </div>
+          </div>
+
+          <div className="space-y-4">
+            <Button
+              size="lg"
+              onClick={() => navigate('/')}
+              className="w-full py-4 text-base font-bold text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 shadow-xl shadow-blue-600/10 hover:shadow-blue-500/20 active:scale-[0.98] transition-all rounded-xl"
+            >
+              <Home className="w-5 h-5 mr-2" />
+              Volver al Inicio
+            </Button>
           </div>
         </CardContent>
       </Card>
