@@ -212,8 +212,6 @@ INSERT INTO planchas (nombre, color) VALUES
 -- Insert default positions
 INSERT INTO cargos (nombre, orden) VALUES
     ('Presidente', 1),
-    ('Vicepresidente', 2),
-    ('Secretario', 3),
-    ('Tesorero', 4),
-    ('Vocal', 5),
-    ('Asesor', 6);
+    ('Secretaria', 2),
+    ('Vocal', 3),
+    ('Asesor', 4);
