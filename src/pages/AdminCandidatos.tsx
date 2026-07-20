@@ -9,7 +9,7 @@ import { candidatoService } from '../services/candidatoService';
 import { cargoService } from '../services/cargoService';
 import { planchaService } from '../services/planchaService';
 import type { Candidato, Cargo, Plancha } from '../types';
-import { Plus, Pencil, Trash2, ArrowLeft, Upload } from 'lucide-react';
+import { Plus, Pencil, Trash2, ArrowLeft, Upload, Printer } from 'lucide-react';
 
 export const AdminCandidatos: React.FC = () => {
   const navigate = useNavigate();
@@ -120,25 +120,34 @@ export const AdminCandidatos: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <nav className="bg-white shadow-sm border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
-            <div className="flex items-center">
-              <Button variant="outline" onClick={() => navigate('/admin/dashboard')} className="mr-4">
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Volver
-              </Button>
-              <h1 className="text-xl font-bold text-gray-900">Gestión de Candidatos</h1>
+      {/* Contenido en pantalla (oculto al imprimir) */}
+      <div className="print:hidden">
+        <nav className="bg-white shadow-sm border-b border-gray-200">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex justify-between h-16">
+              <div className="flex items-center">
+                <Button variant="outline" onClick={() => navigate('/admin/dashboard')} className="mr-4">
+                  <ArrowLeft className="w-4 h-4 mr-2" />
+                  Volver
+                </Button>
+                <h1 className="text-xl font-bold text-gray-900">Gestión de Candidatos</h1>
+              </div>
+              <div className="flex items-center space-x-3">
+                <Button variant="outline" onClick={() => window.print()} className="border-gray-300">
+                  <Printer className="w-4 h-4 mr-2" />
+                  Exportar PDF
+                </Button>
+                <Button onClick={handleAdd}>
+                  <Plus className="w-4 h-4 mr-2" />
+                  Agregar Candidato
+                </Button>
+              </div>
             </div>
-            <Button onClick={handleAdd}>
-              <Plus className="w-4 h-4 mr-2" />
-              Agregar Candidato
-            </Button>
           </div>
-        </div>
-      </nav>
+        </nav>
+      </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 print:hidden">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {candidatos.map((candidato) => (
             <Card key={candidato.id}>
@@ -289,6 +298,41 @@ export const AdminCandidatos: React.FC = () => {
           </div>
         </form>
       </Modal>
+
+      {/* Planilla de Candidatos para Impresión PDF (visible solo en impresión) */}
+      <div className="hidden print:block bg-white text-black p-8 min-h-screen">
+        <div className="flex items-center justify-between border-b-2 border-gray-300 pb-4 mb-6">
+          <div className="flex items-center gap-4">
+            <img src="/company_logo.jpg" alt="Logo" className="w-16 h-16 rounded-xl object-cover border border-gray-300 shadow-sm" />
+            <div>
+              <h1 className="text-2xl font-bold uppercase tracking-tight text-gray-900">Planilla de Candidatos</h1>
+              <p className="text-sm text-gray-500 font-medium">Elecciones Internas 2026</p>
+            </div>
+          </div>
+          <div className="text-right">
+            <p className="text-xs text-gray-400 font-semibold">Fecha de emisión: {new Date().toLocaleDateString()}</p>
+          </div>
+        </div>
+        
+        <div className="grid grid-cols-2 gap-6">
+          {candidatos.map((candidato) => (
+            <div key={candidato.id} className="flex items-center gap-4 p-4 border border-gray-200 rounded-xl bg-gray-50/50">
+              {candidato.foto ? (
+                <img src={candidato.foto} alt={candidato.nombre} className="w-16 h-16 rounded-full object-cover border border-gray-300 shadow-sm" />
+              ) : (
+                <div className="w-16 h-16 rounded-full bg-gray-200 border border-gray-300 flex items-center justify-center text-gray-500 font-bold">
+                  {candidato.nombre.charAt(0)}
+                </div>
+              )}
+              <div>
+                <h3 className="font-bold text-gray-800 text-lg leading-tight">{candidato.nombre}</h3>
+                <p className="text-sm text-blue-600 font-bold mt-0.5">{candidato.cargo?.nombre}</p>
+                <p className="text-xs text-gray-500 font-semibold mt-0.5">{candidato.plancha?.nombre}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 };

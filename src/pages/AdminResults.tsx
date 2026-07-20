@@ -5,7 +5,7 @@ import { Card, CardContent } from '../components/ui/Card';
 import { LoadingSpinner } from '../components/ui/LoadingSpinner';
 import { votoService } from '../services/votoService';
 import type { PositionResults } from '../types';
-import { ArrowLeft, Trophy, BarChart3, Medal } from 'lucide-react';
+import { ArrowLeft, Trophy, BarChart3, Medal, Printer } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 
 const COLORS = ['#3B82F6', '#EF4444', '#10B981', '#F59E0B', '#8B5CF6', '#EC4899'];
@@ -48,42 +48,52 @@ export const AdminResults: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-slate-900 text-white relative overflow-hidden">
-      {/* Decorative background blur elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-0 right-1/4 w-[600px] h-[600px] bg-blue-500/5 rounded-full blur-[130px] animate-pulse"></div>
-        <div className="absolute bottom-0 left-1/4 w-[600px] h-[600px] bg-indigo-500/5 rounded-full blur-[130px] animate-pulse" style={{ animationDelay: '2s' }}></div>
-      </div>
+      {/* Contenido en pantalla (oculto al imprimir) */}
+      <div className="print:hidden">
+        {/* Decorative background blur elements */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-0 right-1/4 w-[600px] h-[600px] bg-blue-500/5 rounded-full blur-[130px] animate-pulse"></div>
+          <div className="absolute bottom-0 left-1/4 w-[600px] h-[600px] bg-indigo-500/5 rounded-full blur-[130px] animate-pulse" style={{ animationDelay: '2s' }}></div>
+        </div>
 
-      <nav className="bg-slate-900/60 backdrop-blur-xl border-b border-white/10 relative z-10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
-            <div className="flex items-center">
-              <Button 
-                variant="outline" 
-                onClick={() => navigate('/admin/dashboard')} 
-                className="mr-4 border-white/10 text-slate-300 hover:text-white hover:bg-white/5"
-              >
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Volver
-              </Button>
-              <h1 className="text-xl font-bold bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent">
-                Resultados Electorales
-              </h1>
-            </div>
-            <div className="flex items-center">
-              <Button 
-                onClick={loadResults}
-                className="bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded-xl"
-              >
-                <BarChart3 className="w-4 h-4 mr-2" />
-                Actualizar
-              </Button>
+        <nav className="bg-slate-900/60 backdrop-blur-xl border-b border-white/10 relative z-10">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex justify-between h-16">
+              <div className="flex items-center">
+                <Button 
+                  variant="outline" 
+                  onClick={() => navigate('/admin/dashboard')} 
+                  className="mr-4 border-white/10 text-slate-300 hover:text-white hover:bg-white/5"
+                >
+                  <ArrowLeft className="w-4 h-4 mr-2" />
+                  Volver
+                </Button>
+                <h1 className="text-xl font-bold bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent">
+                  Resultados Electorales
+                </h1>
+              </div>
+              <div className="flex items-center space-x-3">
+                <Button 
+                  variant="outline"
+                  onClick={() => window.print()}
+                  className="border-white/10 text-slate-300 hover:text-white hover:bg-white/5"
+                >
+                  <Printer className="w-4 h-4 mr-2" />
+                  Exportar PDF
+                </Button>
+                <Button 
+                  onClick={loadResults}
+                  className="bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded-xl"
+                >
+                  <BarChart3 className="w-4 h-4 mr-2" />
+                  Actualizar
+                </Button>
+              </div>
             </div>
           </div>
-        </div>
-      </nav>
+        </nav>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10">
         {results.length === 0 ? (
           <Card className="bg-slate-900/60 border border-white/10 text-white">
             <CardContent className="p-8 text-center">
@@ -237,6 +247,63 @@ export const AdminResults: React.FC = () => {
             })}
           </div>
         )}
+      </div>
+      </div>
+
+      {/* Acta de Impresión de Ganadores (visible solo en impresión) */}
+      <div className="hidden print:block bg-white text-black p-8 min-h-screen">
+        <div className="flex items-center justify-between border-b-2 border-gray-300 pb-4 mb-6">
+          <div className="flex items-center gap-4">
+            <img src="/company_logo.jpg" alt="Logo" className="w-16 h-16 rounded-xl object-cover border border-gray-300 shadow-sm" />
+            <div>
+              <h1 className="text-2xl font-bold uppercase tracking-tight text-gray-900">Acta Oficial de Ganadores</h1>
+              <p className="text-sm text-gray-500 font-medium">Elecciones Internas 2026</p>
+            </div>
+          </div>
+          <div className="text-right">
+            <p className="text-xs text-gray-400 font-semibold">Fecha de emisión: {new Date().toLocaleDateString()}</p>
+          </div>
+        </div>
+
+        <div className="space-y-8">
+          {results.map((positionResult) => {
+            const isVocal = positionResult.cargo.nombre.toLowerCase().includes('vocal');
+            const maxWinners = isVocal ? 4 : 1;
+            const winners = positionResult.resultados.filter((_, idx) => idx < maxWinners && _.total_votos > 0);
+
+            if (winners.length === 0) return null;
+
+            return (
+              <div key={positionResult.cargo.id} className="border border-gray-200 rounded-xl p-5 bg-gray-50/50">
+                <h2 className="text-lg font-bold text-gray-900 border-b border-gray-200 pb-2 mb-4">
+                  Cargo: {positionResult.cargo.nombre}
+                </h2>
+                <div className="grid grid-cols-2 gap-4">
+                  {winners.map((result, idx) => (
+                    <div key={result.candidato.id} className="flex items-center gap-4 p-3 bg-white border border-gray-100 rounded-lg shadow-sm">
+                      {result.candidato.foto ? (
+                        <img src={result.candidato.foto} alt={result.candidato.nombre} className="w-12 h-12 rounded-full object-cover border border-gray-200 shadow-sm" />
+                      ) : (
+                        <div className="w-12 h-12 rounded-full bg-gray-200 border border-gray-200 flex items-center justify-center text-gray-400 font-bold text-sm">
+                          {result.candidato.nombre.charAt(0)}
+                        </div>
+                      )}
+                      <div>
+                        <h3 className="font-bold text-gray-800 text-sm leading-snug">{result.candidato.nombre}</h3>
+                        <p className="text-xs text-blue-600 font-bold mt-0.5">
+                          {isVocal ? `Vocal Electo #${idx + 1}` : 'Candidato Electo'}
+                        </p>
+                        <p className="text-[10px] text-gray-400 font-medium mt-0.5">
+                          Plancha: {result.candidato.plancha?.nombre} • Votos: {result.total_votos} ({result.porcentaje.toFixed(1)}%)
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            );
+          })}
+        </div>
       </div>
     </div>
   );

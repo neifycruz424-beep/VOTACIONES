@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 import { Card, CardContent, CardHeader } from '../components/ui/Card';
-import { Lock, ArrowLeft, Shield } from 'lucide-react';
+import { Lock, ArrowLeft, Shield, Sparkles } from 'lucide-react';
 
 export const AdminLogin: React.FC = () => {
   const navigate = useNavigate();
@@ -17,7 +17,6 @@ export const AdminLogin: React.FC = () => {
     setError('');
     setIsLoading(true);
 
-    // Simple authentication check (in production, use proper auth)
     const adminEmail = import.meta.env.VITE_ADMIN_EMAIL || 'admin@example.com';
     const adminPassword = import.meta.env.VITE_ADMIN_PASSWORD || 'admin123';
 
@@ -32,90 +31,111 @@ export const AdminLogin: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-800 flex items-center justify-center p-4 relative overflow-hidden">
-      {/* Animated background elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-pulse"></div>
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-pink-500 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-pulse" style={{ animationDelay: '1s' }}></div>
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-slate-900 flex items-center justify-center p-4 relative overflow-hidden text-white">
+      {/* Decorative background blur elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-1/4 left-1/4 w-[400px] h-[400px] bg-blue-500/10 rounded-full blur-[100px] animate-pulse"></div>
+        <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-indigo-500/10 rounded-full blur-[100px] animate-pulse" style={{ animationDelay: '1.5s' }}></div>
       </div>
 
-      <Card className="max-w-md w-full bg-white/95 backdrop-blur-xl shadow-2xl border-0 relative z-10">
-        <CardHeader className="pb-6">
+      <Card className="max-w-md w-full bg-slate-900/60 backdrop-blur-xl border border-white/10 shadow-2xl relative z-10 text-white rounded-2xl overflow-hidden">
+        <div className="h-2 bg-gradient-to-r from-blue-600 via-indigo-500 to-red-500"></div>
+        
+        <CardHeader className="pb-4 pt-8 px-8 border-b border-white/5">
           <div className="flex items-center gap-3 mb-4">
             <Button
               variant="outline"
               size="sm"
               onClick={() => navigate('/')}
-              className="border-gray-300"
+              className="border-white/10 text-slate-300 hover:text-white hover:bg-white/5"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
               Volver
             </Button>
           </div>
-          <div className="flex items-center justify-center mb-4">
-            <div className="w-20 h-20 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-full flex items-center justify-center shadow-lg animate-pulse">
-              <Lock className="w-10 h-10 text-white" />
-            </div>
-          </div>
-          <h2 className="text-3xl font-bold text-center bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-            Acceso Administrativo
-          </h2>
-          <p className="text-gray-600 text-center mt-2">
-            Ingrese sus credenciales para acceder al panel
-          </p>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="relative">
-              <Input
-                label="Email"
-                type="email"
-                placeholder="admin@example.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                disabled={isLoading}
-                autoFocus
-                className="text-lg"
+          
+          <div className="text-center mt-6">
+            <div className="flex justify-center mb-4">
+              <img 
+                src="/company_logo.jpg" 
+                alt="Logo" 
+                className="w-20 h-20 rounded-2xl object-cover border border-white/10 shadow-lg shadow-blue-500/15"
               />
-              <div className="absolute right-3 top-9">
-                <Shield className="w-5 h-5 text-gray-400" />
+            </div>
+            <h2 className="text-2xl font-bold tracking-tight text-white flex items-center justify-center gap-2">
+              Acceso Administrativo
+            </h2>
+            <p className="text-slate-400 text-sm mt-1.5">
+              Ingrese sus credenciales de administrador
+            </p>
+          </div>
+        </CardHeader>
+        
+        <CardContent className="p-8">
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="space-y-1.5">
+              <label className="block text-sm font-semibold text-slate-300">
+                Correo Electrónico
+              </label>
+              <div className="relative">
+                <Input
+                  type="email"
+                  placeholder="admin@correo.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  disabled={isLoading}
+                  autoFocus
+                  required
+                  className="bg-slate-950/60 border-white/10 text-white placeholder-slate-500 focus:ring-blue-500 focus:border-transparent py-3 pl-10"
+                />
+                <div className="absolute left-3.5 top-3.5 pointer-events-none">
+                  <Shield className="w-5 h-5 text-slate-500" />
+                </div>
               </div>
             </div>
 
-            <div className="relative">
-              <Input
-                label="Contraseña"
-                type="password"
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                disabled={isLoading}
-                className="text-lg"
-              />
-              <div className="absolute right-3 top-9">
-                <Lock className="w-5 h-5 text-gray-400" />
+            <div className="space-y-1.5">
+              <label className="block text-sm font-semibold text-slate-300">
+                Contraseña
+              </label>
+              <div className="relative">
+                <Input
+                  type="password"
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  disabled={isLoading}
+                  required
+                  className="bg-slate-950/60 border-white/10 text-white placeholder-slate-500 focus:ring-blue-500 focus:border-transparent py-3 pl-10"
+                />
+                <div className="absolute left-3.5 top-3.5 pointer-events-none">
+                  <Lock className="w-5 h-5 text-slate-500" />
+                </div>
               </div>
             </div>
 
             {error && (
-              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg flex items-center gap-2">
-                <Shield className="w-5 h-5" />
+              <div className="bg-red-500/10 border border-red-500/25 text-red-200 px-4 py-3 rounded-xl text-sm flex items-center gap-2">
+                <Shield className="w-5 h-5 text-red-400" />
                 {error}
               </div>
             )}
 
             <Button
               type="submit"
-              className="w-full py-4 text-lg bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+              className="w-full py-4.5 text-base font-bold text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 shadow-xl shadow-blue-600/10 hover:shadow-blue-500/20 active:scale-[0.98] transition-all rounded-xl"
               isLoading={isLoading}
               disabled={!email.trim() || !password.trim()}
             >
               Iniciar Sesión
             </Button>
 
-            <p className="text-center text-sm text-gray-500">
-              Área restringida para personal autorizado
-            </p>
+            <div className="pt-4 border-t border-white/5 text-center">
+              <p className="text-xs text-slate-500 flex items-center justify-center gap-1.5">
+                <Sparkles className="w-3.5 h-3.5 text-yellow-500/70" />
+                Acceso restringido de alta seguridad
+              </p>
+            </div>
           </form>
         </CardContent>
       </Card>
