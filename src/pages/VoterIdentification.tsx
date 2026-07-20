@@ -5,6 +5,7 @@ import { Input } from '../components/ui/Input';
 import { Card, CardContent, CardHeader } from '../components/ui/Card';
 import { votanteService } from '../services/votanteService';
 import { User, ArrowLeft, Shield, Fingerprint, Sparkles } from 'lucide-react';
+import { validarCedula, formatearCedula } from '../utils/cedulaValidador';
 
 export const VoterIdentification: React.FC = () => {
   const navigate = useNavigate();
@@ -18,7 +19,7 @@ export const VoterIdentification: React.FC = () => {
     setError('');
     
     const cleanNombre = nombre.trim();
-    const cleanCedula = cedula.trim().replace(/[^0-9a-zA-Z]/g, ''); // Remove spaces, dashes, etc.
+    const cleanCedula = cedula.replace(/[^0-9]/g, ''); // Keep only numeric digits for JCE checking and database matching
 
     if (!cleanNombre) {
       setError('Por favor ingrese su nombre completo');
@@ -27,6 +28,12 @@ export const VoterIdentification: React.FC = () => {
 
     if (!cleanCedula) {
       setError('Por favor ingrese su número de identificación (Cédula)');
+      return;
+    }
+
+    // Mathematical Dominican Cédula validation
+    if (!validarCedula(cleanCedula)) {
+      setError('La cédula ingresada no es válida (el dígito verificador es incorrecto). Por favor, verifíquela.');
       return;
     }
 
@@ -142,7 +149,7 @@ export const VoterIdentification: React.FC = () => {
                 <Input
                   placeholder="Ej: 001-0000000-0"
                   value={cedula}
-                  onChange={(e) => setCedula(e.target.value)}
+                  onChange={(e) => setCedula(formatearCedula(e.target.value))}
                   disabled={isLoading}
                   required
                   className="bg-slate-950/60 border-white/10 text-white placeholder-slate-500 focus:ring-blue-500 focus:border-transparent py-3 pl-10"

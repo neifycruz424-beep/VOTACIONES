@@ -8,6 +8,7 @@ import { LoadingSpinner } from '../components/ui/LoadingSpinner';
 import { votanteService } from '../services/votanteService';
 import type { Votante } from '../types';
 import { Plus, Pencil, Trash2, ArrowLeft, CheckCircle, Clock, Users, Printer } from 'lucide-react';
+import { validarCedula, formatearCedula } from '../utils/cedulaValidador';
 
 export const AdminVotantes: React.FC = () => {
   const navigate = useNavigate();
@@ -40,6 +41,19 @@ export const AdminVotantes: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Clean and validate code (cédula)
+    const cleanCodigo = formData.codigo.replace(/[^0-9]/g, '');
+    
+    // Check if the input is purely numeric (indicating a standard cédula)
+    // If it is, run the mathematical validation and warn if it's incorrect
+    if (/^[0-9]+$/.test(cleanCodigo) && !validarCedula(cleanCodigo)) {
+      const proceed = window.confirm(
+        'ADVERTENCIA: La cédula ingresada ("' + formData.codigo + '") no es válida según los algoritmos de la JCE (dígito verificador incorrecto).\n\n¿Está seguro de que desea registrar este votante de todas formas?'
+      );
+      if (!proceed) return;
+    }
+
     try {
       if (editingVotante) {
         await votanteService.updateVotante(editingVotante.id, formData);
@@ -199,9 +213,10 @@ export const AdminVotantes: React.FC = () => {
         >
           <form onSubmit={handleSubmit} className="space-y-4">
             <Input
-              label="Código"
+              label="Cédula"
+              placeholder="001-0000000-0"
               value={formData.codigo}
-              onChange={(e) => setFormData({ ...formData, codigo: e.target.value })}
+              onChange={(e) => setFormData({ ...formData, codigo: formatearCedula(e.target.value) })}
               required
             />
             <Input
