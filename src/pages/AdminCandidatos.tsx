@@ -345,77 +345,45 @@ export const AdminCandidatos: React.FC = () => {
         </div>
         
         <div className="grid grid-cols-2 gap-8 mt-6">
-          {/* COLUMNA PLANCHA 1 */}
-          <div className="border border-gray-200 rounded-xl p-5 bg-gray-50/20">
-            <h2 className="text-xl font-bold text-blue-600 border-b-2 border-blue-200 pb-2 mb-4 uppercase tracking-wider text-center">
-              Plancha 1
-            </h2>
-            <div className="space-y-5">
-              {cargos.map((cargo) => {
-                const cargoCandidatos = candidatos.filter(
-                  c => c.plancha?.nombre.toLowerCase().includes('1') && c.cargo_id === cargo.id
-                );
-                if (cargoCandidatos.length === 0) return null;
-                return (
-                  <div key={cargo.id} className="space-y-2">
-                    <span className="text-[10px] font-extrabold uppercase tracking-widest text-gray-400 block border-b border-gray-100 pb-0.5">
-                      {cargo.nombre}
-                    </span>
-                    <div className="space-y-1.5">
-                      {cargoCandidatos.map((cand) => (
-                        <div key={cand.id} className="flex items-center gap-3 p-2 bg-white border border-gray-150 rounded-lg shadow-sm">
-                          {cand.foto ? (
-                            <img src={cand.foto} alt={cand.nombre} className="w-10 h-10 rounded-full object-cover border border-gray-200" />
-                          ) : (
-                            <div className="w-10 h-10 rounded-full bg-gray-100 border border-gray-200 flex items-center justify-center text-gray-400 font-bold text-xs">
-                              {cand.nombre.charAt(0)}
-                            </div>
-                          )}
-                          <span className="font-bold text-gray-800 text-sm">{cand.nombre}</span>
-                        </div>
-                      ))}
+          {planchas.map((plancha) => (
+            <div key={plancha.id} className="border border-gray-200 rounded-xl p-5 bg-gray-50/20">
+              <h2 
+                className="text-xl font-bold border-b-2 pb-2 mb-4 uppercase tracking-wider text-center" 
+                style={{ color: plancha.color, borderColor: plancha.color + '50' }}
+              >
+                {plancha.nombre}
+              </h2>
+              <div className="space-y-5">
+                {cargos.map((cargo) => {
+                  const cargoCandidatos = candidatos.filter(
+                    c => c.plancha_id === plancha.id && c.cargo_id === cargo.id
+                  );
+                  if (cargoCandidatos.length === 0) return null;
+                  return (
+                    <div key={cargo.id} className="space-y-2">
+                      <span className="text-[10px] font-extrabold uppercase tracking-widest text-gray-400 block border-b border-gray-100 pb-0.5">
+                        {cargo.nombre}
+                      </span>
+                      <div className="space-y-1.5">
+                        {cargoCandidatos.map((cand) => (
+                          <div key={cand.id} className="flex items-center gap-3 p-2 bg-white border border-gray-150 rounded-lg shadow-sm">
+                            {cand.foto ? (
+                              <img src={cand.foto} alt={cand.nombre} className="w-10 h-10 rounded-full object-cover border border-gray-200" />
+                            ) : (
+                              <div className="w-10 h-10 rounded-full bg-gray-100 border border-gray-200 flex items-center justify-center text-gray-400 font-bold text-xs">
+                                {cand.nombre.charAt(0)}
+                              </div>
+                            )}
+                            <span className="font-bold text-gray-800 text-sm">{cand.nombre}</span>
+                          </div>
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                );
-              })}
+                  );
+                })}
+              </div>
             </div>
-          </div>
-
-          {/* COLUMNA PLANCHA 2 */}
-          <div className="border border-gray-200 rounded-xl p-5 bg-gray-50/20">
-            <h2 className="text-xl font-bold text-red-600 border-b-2 border-red-200 pb-2 mb-4 uppercase tracking-wider text-center">
-              Plancha 2
-            </h2>
-            <div className="space-y-5">
-              {cargos.map((cargo) => {
-                const cargoCandidatos = candidatos.filter(
-                  c => c.plancha?.nombre.toLowerCase().includes('2') && c.cargo_id === cargo.id
-                );
-                if (cargoCandidatos.length === 0) return null;
-                return (
-                  <div key={cargo.id} className="space-y-2">
-                    <span className="text-[10px] font-extrabold uppercase tracking-widest text-gray-400 block border-b border-gray-100 pb-0.5">
-                      {cargo.nombre}
-                    </span>
-                    <div className="space-y-1.5">
-                      {cargoCandidatos.map((cand) => (
-                        <div key={cand.id} className="flex items-center gap-3 p-2 bg-white border border-gray-150 rounded-lg shadow-sm">
-                          {cand.foto ? (
-                            <img src={cand.foto} alt={cand.nombre} className="w-10 h-10 rounded-full object-cover border border-gray-200" />
-                          ) : (
-                            <div className="w-10 h-10 rounded-full bg-gray-100 border border-gray-200 flex items-center justify-center text-gray-400 font-bold text-xs">
-                              {cand.nombre.charAt(0)}
-                            </div>
-                          )}
-                          <span className="font-bold text-gray-800 text-sm">{cand.nombre}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
+          ))}
         </div>
       </div>
     </div>
