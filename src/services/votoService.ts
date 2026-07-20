@@ -2,11 +2,18 @@ import { supabase } from '../lib/supabase';
 import type { Voto, VoteSelection, PositionResults, DashboardStats } from '../types';
 
 export const votoService = {
-  async submitVote(votanteId: string, selections: VoteSelection[]): Promise<void> {
+  async submitVote(
+    votanteId: string, 
+    selections: VoteSelection[], 
+    sospechoso: boolean = false, 
+    motivoSospecha: string | null = null
+  ): Promise<void> {
     const votes = selections.map(selection => ({
       votante_id: votanteId,
       candidato_id: selection.candidato_id,
       cargo_id: selection.cargo_id,
+      sospechoso,
+      motivo_sospecha: motivoSospecha
     }));
 
     const { error } = await supabase
@@ -20,7 +27,8 @@ export const votoService = {
     const { data, error } = await supabase
       .from('votos')
       .select('*, candidato:candidatos(*), cargo:cargos(*)')
-      .eq('cargo_id', cargoId);
+      .eq('cargo_id', cargoId)
+      .neq('sospechoso', true); // Excluir votos sospechosos del escrutinio general
 
     if (error) throw error;
     return data || [];
@@ -115,5 +123,46 @@ export const votoService = {
       .neq('id', '00000000-0000-0000-0000-000000000000');
 
     if (errVotantes) throw errVotantes;
+  },
+
+  // Obtener todos los votos sospechosos con detalles de votante y candidato
+  async getSuspiciousVotes(): Promise<Voto[]> {
+    const { data, error } = await supabase
+      .from('votos')
+      .select('*, candidato:candidatos(*), cargo:cargos(*), votante:votantes(*)')
+      .eq('sospechoso', true)
+      .order('fecha', { ascending: false });
+
+    if (error) throw error;
+    return data || [];
+  },
+
+  // Aprobar un voto sospechoso (lo marca como limpio)
+  async approveVote(votanteId: string): Promise<void> {
+    const { error } = await supabase
+      .from('votos')
+      .update({ sospechoso: false, motivo_sospecha: 'Aprobado por el Administrador' })
+      .eq('votante_id', votanteId);
+
+    if (error) throw error;
+  },
+
+  // Rechazar / Anular un voto sospechoso
+  async rejectVote(votanteId: string): Promise<void> {
+    // 1. Eliminar los votos asociados al votante
+    const { error: errVotos } = await supabase
+      .from('votos')
+      .delete()
+      .eq('votante_id', votanteId);
+
+    if (errVotos) throw errVotos;
+
+    // 2. Restablecer al votante para que pueda votar de nuevo si fue un error
+    const { error: errVotante } = await supabase
+      .from('votantes')
+      .update({ ya_voto: false })
+      .eq('id', votanteId);
+
+    if (errVotante) throw errVotante;
   },
 };

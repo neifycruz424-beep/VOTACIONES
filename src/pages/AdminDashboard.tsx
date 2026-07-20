@@ -6,7 +6,7 @@ import { LoadingSpinner } from '../components/ui/LoadingSpinner';
 import { votoService } from '../services/votoService';
 import { supabase } from '../lib/supabase';
 import type { DashboardStats } from '../types';
-import { Users, Vote, TrendingUp, Power, Settings, BarChart3, UserPlus, Users2, LogOut, RefreshCw } from 'lucide-react';
+import { Users, Vote, TrendingUp, Power, Settings, BarChart3, UserPlus, Users2, LogOut, RefreshCw, ShieldAlert } from 'lucide-react';
 
 export const AdminDashboard: React.FC = () => {
   const navigate = useNavigate();
@@ -305,6 +305,24 @@ export const AdminDashboard: React.FC = () => {
                 <div>
                   <h3 className="font-bold text-gray-900 text-lg">Resultados</h3>
                   <p className="text-sm text-gray-600">Ver resultados en tiempo real</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* New Fraud Monitoring and Audit Page */}
+          <Card 
+            className="bg-white/95 backdrop-blur-xl shadow-2xl border-0 cursor-pointer hover:scale-105 transition-all duration-300" 
+            onClick={() => navigate('/admin/auditoria')}
+          >
+            <CardContent className="p-6">
+              <div className="flex items-center space-x-4">
+                <div className="w-14 h-14 bg-gradient-to-br from-red-600 to-amber-600 rounded-xl flex items-center justify-center shadow-lg">
+                  <ShieldAlert className="w-7 h-7 text-white" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-gray-900 text-lg">Monitoreo de Fraude</h3>
+                  <p className="text-sm text-gray-600">Revisar votos sospechosos</p>
                 </div>
               </div>
             </CardContent>

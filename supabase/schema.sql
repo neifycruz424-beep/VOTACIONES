@@ -53,14 +53,15 @@ CREATE TABLE votantes (
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- Create votes table
 CREATE TABLE votos (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     votante_id UUID NOT NULL REFERENCES votantes(id) ON DELETE CASCADE,
     candidato_id UUID NOT NULL REFERENCES candidatos(id) ON DELETE CASCADE,
     cargo_id UUID NOT NULL REFERENCES cargos(id) ON DELETE CASCADE,
     fecha TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    UNIQUE(votante_id, cargo_id) -- One vote per voter per position
+    sospechoso BOOLEAN DEFAULT FALSE,
+    motivo_sospecha TEXT,
+    UNIQUE(votante_id, candidato_id) -- One vote per voter per candidate (enables slate multi-cargos)
 );
 
 -- Create indexes for better performance

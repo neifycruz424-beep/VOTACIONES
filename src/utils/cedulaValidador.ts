@@ -60,3 +60,36 @@ export function formatearCedula(cedula: string): string {
     return `${limpia.slice(0, 3)}-${limpia.slice(3, 10)}-${limpia.slice(10, 11)}`;
   }
 }
+
+/**
+ * Compara dos nombres y determina si son altamente similares para alertar posible fraude o duplicidad.
+ */
+export function calcularSimilitud(n1: string, n2: string): boolean {
+  if (!n1 || !n2) return false;
+  
+  // Normalizar (quitar acentos, pasar a minúsculas, recortar espacios)
+  const norm1 = n1.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
+  const norm2 = n2.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
+
+  if (norm1 === norm2) return true;
+
+  // Si uno de los nombres contiene al otro y tiene al menos 4 letras
+  if (norm1.length >= 4 && norm2.length >= 4) {
+    if (norm1.includes(norm2) || norm2.includes(norm1)) {
+      return true;
+    }
+  }
+
+  // Separar en palabras para verificar coincidencias parciales
+  const palabras1 = norm1.split(/\s+/);
+  const palabras2 = norm2.split(/\s+/);
+
+  // Si comparten al menos 2 palabras significativas (de longitud >= 3)
+  const comunes = palabras1.filter(p => p.length >= 3 && palabras2.includes(p));
+  if (comunes.length >= 2) {
+    return true;
+  }
+
+  return false;
+}
+

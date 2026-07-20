@@ -68,7 +68,10 @@ export const VotingPage: React.FC = () => {
         candidato_id: c.id,
       }));
 
-      await votoService.submitVote(votante.id, voteSelections);
+      const sospechoso = location.state?.sospechoso || false;
+      const motivoSospecha = location.state?.motivoSospecha || null;
+
+      await votoService.submitVote(votante.id, voteSelections, sospechoso, motivoSospecha);
       navigate('/votar/exito');
     } catch (err) {
       setError('Error al enviar el voto. Por favor intente nuevamente.');

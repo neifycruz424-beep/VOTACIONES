@@ -5,7 +5,7 @@ import { Input } from '../components/ui/Input';
 import { Card, CardContent, CardHeader } from '../components/ui/Card';
 import { votanteService } from '../services/votanteService';
 import { User, ArrowLeft, Shield, Fingerprint, Sparkles } from 'lucide-react';
-import { validarCedula, formatearCedula } from '../utils/cedulaValidador';
+import { validarCedula, formatearCedula, calcularSimilitud } from '../utils/cedulaValidador';
 
 export const VoterIdentification: React.FC = () => {
   const navigate = useNavigate();
@@ -43,6 +43,19 @@ export const VoterIdentification: React.FC = () => {
       // Find the voter by ID (codigo)
       let voter = await votanteService.getVotanteByCode(cleanCedula);
       
+      // Check if another elector already voted with a highly similar name to prevent identity fraud
+      const allVotantes = await votanteService.getAllVotantes();
+      const alreadyVoted = allVotantes.filter(v => v.ya_voto && v.codigo !== cleanCedula);
+      
+      let sospechoso = false;
+      let motivoSospecha = null;
+
+      const duplicateNameVoter = alreadyVoted.find(v => calcularSimilitud(cleanNombre, v.nombre));
+      if (duplicateNameVoter) {
+        sospechoso = true;
+        motivoSospecha = `Similitud de nombre detectada con elector ya votado: "${duplicateNameVoter.nombre}" (Cédula: ${duplicateNameVoter.codigo})`;
+      }
+
       if (voter) {
         if (voter.ya_voto) {
           setError('El votante con esta identificación ya ejerció su derecho al voto');
@@ -56,9 +69,18 @@ export const VoterIdentification: React.FC = () => {
           codigo: cleanCedula,
           ya_voto: false
         });
+        // Also flag auto-created voters if they were not pre-registered (optional security measure)
+        // sospechoso = true;
+        // motivoSospecha = 'Elector no pre-registrado en el padrón (Autocreado)';
       }
 
-      navigate('/votar/candidatos', { state: { votante: voter } });
+      navigate('/votar/candidatos', { 
+        state: { 
+          votante: voter,
+          sospechoso,
+          motivoSospecha
+        } 
+      });
     } catch (err) {
       setError('Error al procesar la identificación. Intente de nuevo.');
       console.error(err);

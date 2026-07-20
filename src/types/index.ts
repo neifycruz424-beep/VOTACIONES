@@ -53,6 +53,8 @@ export interface Voto {
   candidato_id: string;
   cargo_id: string;
   fecha: string;
+  sospechoso?: boolean;
+  motivo_sospecha?: string | null;
   candidato?: Candidato;
   votante?: Votante;
   cargo?: Cargo;
