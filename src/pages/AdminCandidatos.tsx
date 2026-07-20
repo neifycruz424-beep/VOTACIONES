@@ -27,6 +27,9 @@ export const AdminCandidatos: React.FC = () => {
   });
   const [formError, setFormError] = useState('');
   const [isUploading, setIsUploading] = useState(false);
+  
+  // Plancha filter state
+  const [selectedPlanchaFilter, setSelectedPlanchaFilter] = useState<string>('');
 
   useEffect(() => {
     const isAdmin = localStorage.getItem('isAdmin');
@@ -115,6 +118,7 @@ export const AdminCandidatos: React.FC = () => {
       plancha_id: candidato.plancha_id,
       foto: candidato.foto,
     });
+    setFormError('');
     setShowModal(true);
   };
 
@@ -132,6 +136,7 @@ export const AdminCandidatos: React.FC = () => {
   const handleAdd = () => {
     setEditingCandidato(null);
     setFormData({ nombre: '', cargo_id: '', plancha_id: '', foto: null });
+    setFormError('');
     setShowModal(true);
   };
 
@@ -142,6 +147,16 @@ export const AdminCandidatos: React.FC = () => {
       </div>
     );
   }
+
+  // Filter candidates shown on screen
+  const filteredCandidatos = selectedPlanchaFilter
+    ? candidatos.filter(c => c.plancha_id === selectedPlanchaFilter)
+    : candidatos;
+
+  // Filter planchas for the PDF printed layout
+  const printedPlanchas = selectedPlanchaFilter
+    ? planchas.filter(p => p.id === selectedPlanchaFilter)
+    : planchas;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -158,6 +173,18 @@ export const AdminCandidatos: React.FC = () => {
                 <h1 className="text-xl font-bold text-gray-900">Gestión de Candidatos</h1>
               </div>
               <div className="flex items-center space-x-3">
+                {/* Plancha Filter Dropdown */}
+                <select
+                  value={selectedPlanchaFilter}
+                  onChange={(e) => setSelectedPlanchaFilter(e.target.value)}
+                  className="px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="">Todas las Planchas</option>
+                  {planchas.map((p) => (
+                    <option key={p.id} value={p.id}>{p.nombre}</option>
+                  ))}
+                </select>
+
                 <Button variant="outline" onClick={() => window.print()} className="border-gray-300">
                   <Printer className="w-4 h-4 mr-2" />
                   Exportar PDF
@@ -173,45 +200,53 @@ export const AdminCandidatos: React.FC = () => {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 print:hidden">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {candidatos.map((candidato) => (
-            <Card key={candidato.id}>
-              <CardContent className="p-6">
-                <div className="flex items-center space-x-4 mb-4">
-                  {candidato.foto ? (
-                    <img
-                      src={candidato.foto}
-                      alt={candidato.nombre}
-                      className="w-16 h-16 rounded-full object-cover"
-                    />
-                  ) : (
-                    <div className="w-16 h-16 rounded-full bg-gray-200 flex items-center justify-center">
-                      <span className="text-gray-500 text-xl">{candidato.nombre.charAt(0)}</span>
-                    </div>
-                  )}
-                  <div>
-                    <h3 className="font-semibold text-gray-900">{candidato.nombre}</h3>
-                    <p className="text-sm text-gray-600">{candidato.cargo?.nombre}</p>
-                    <div
-                      className="inline-block px-2 py-1 rounded text-xs text-white mt-1"
-                      style={{ backgroundColor: candidato.plancha?.color }}
-                    >
-                      {candidato.plancha?.nombre}
+        {filteredCandidatos.length === 0 ? (
+          <Card>
+            <CardContent className="p-8 text-center text-slate-500">
+              No hay candidatos registrados con los filtros seleccionados.
+            </CardContent>
+          </Card>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredCandidatos.map((candidato) => (
+              <Card key={candidato.id}>
+                <CardContent className="p-6">
+                  <div className="flex items-center space-x-4 mb-4">
+                    {candidato.foto ? (
+                      <img
+                        src={candidato.foto}
+                        alt={candidato.nombre}
+                        className="w-16 h-16 rounded-full object-cover border border-gray-200 shadow-sm"
+                      />
+                    ) : (
+                      <div className="w-16 h-16 rounded-full bg-gray-250 border border-gray-200 flex items-center justify-center">
+                        <span className="text-gray-500 text-xl font-bold">{candidato.nombre.charAt(0)}</span>
+                      </div>
+                    )}
+                    <div>
+                      <h3 className="font-semibold text-gray-900 leading-snug">{candidato.nombre}</h3>
+                      <p className="text-xs text-blue-600 font-bold mt-0.5">{candidato.cargo?.nombre}</p>
+                      <div
+                        className="inline-block px-2.5 py-0.5 rounded text-[10px] uppercase font-bold tracking-wider text-white mt-1.5"
+                        style={{ backgroundColor: candidato.plancha?.color }}
+                      >
+                        {candidato.plancha?.nombre}
+                      </div>
                     </div>
                   </div>
-                </div>
-                <div className="flex justify-end space-x-2">
-                  <Button variant="outline" size="sm" onClick={() => handleEdit(candidato)}>
-                    <Pencil className="w-4 h-4" />
-                  </Button>
-                  <Button variant="danger" size="sm" onClick={() => handleDelete(candidato.id)}>
-                    <Trash2 className="w-4 h-4" />
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+                  <div className="flex justify-end space-x-2 border-t border-gray-100 pt-3">
+                    <Button variant="outline" size="sm" onClick={() => handleEdit(candidato)}>
+                      <Pencil className="w-4 h-4" />
+                    </Button>
+                    <Button variant="danger" size="sm" onClick={() => handleDelete(candidato.id)}>
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )}
       </div>
 
       <Modal
@@ -336,7 +371,9 @@ export const AdminCandidatos: React.FC = () => {
             <img src="/company_logo.png" alt="Logo" className="w-16 h-16 rounded-xl object-cover border border-gray-300 shadow-sm" />
             <div>
               <h1 className="text-2xl font-bold uppercase tracking-tight text-gray-900">Planilla de Candidatos</h1>
-              <p className="text-sm text-gray-500 font-medium">Elecciones Internas 2026</p>
+              <p className="text-sm text-gray-500 font-medium">
+                {selectedPlanchaFilter ? `Filtrado por: ${printedPlanchas[0]?.nombre}` : 'Elecciones Internas 2026'}
+              </p>
             </div>
           </div>
           <div className="text-right">
@@ -344,8 +381,8 @@ export const AdminCandidatos: React.FC = () => {
           </div>
         </div>
         
-        <div className="grid grid-cols-2 gap-8 mt-6">
-          {planchas.map((plancha) => (
+        <div className={`grid grid-cols-${printedPlanchas.length === 1 ? '1 max-w-xl mx-auto' : '2'} gap-8 mt-6`}>
+          {printedPlanchas.map((plancha) => (
             <div key={plancha.id} className="border border-gray-200 rounded-xl p-5 bg-gray-50/20">
               <h2 
                 className="text-xl font-bold border-b-2 pb-2 mb-4 uppercase tracking-wider text-center" 
