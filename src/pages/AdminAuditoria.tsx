@@ -107,7 +107,9 @@ export const AdminAuditoria: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 print:hidden">
+    <div className="min-h-screen bg-gray-50">
+      {/* Contenido en pantalla (oculto al imprimir) */}
+      <div className="print:hidden">
       <nav className="bg-white shadow-sm border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
@@ -220,6 +222,7 @@ export const AdminAuditoria: React.FC = () => {
             </div>
           </div>
         )}
+      </div>
       </div>
 
       {/* Acta de Impresión de Auditoría (visible solo en impresión) */}
