@@ -47,16 +47,25 @@ export const AdminResults: React.FC = () => {
   };
 
   // General counts based on dynamic planchas for supremacy stats
+  // General counts based on dynamic planchas for supremacy stats (returns actual plancha/voter count)
   const getPlanchaTotalVotes = (planchaId: string) => {
-    let sum = 0;
+    // Buscar los resultados de Presidente
+    const presResult = results.find(r => r.cargo.nombre.toLowerCase().includes('presidente'));
+    if (presResult) {
+      const candRes = presResult.resultados.find(res => res.candidato.plancha_id === planchaId);
+      if (candRes) return candRes.total_votos;
+    }
+    
+    // Si no hay presidente, buscar el máximo de votos de cualquier candidato de esta plancha
+    let maxVotes = 0;
     results.forEach(pos => {
       pos.resultados.forEach(res => {
-        if (res.candidato.plancha_id === planchaId) {
-          sum += res.total_votos;
+        if (res.candidato.plancha_id === planchaId && res.total_votos > maxVotes) {
+          maxVotes = res.total_votos;
         }
       });
     });
-    return sum;
+    return maxVotes;
   };
 
 

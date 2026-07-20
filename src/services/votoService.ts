@@ -45,11 +45,13 @@ export const votoService = {
       candidateVotes.set(vote.candidato_id, count + 1);
     });
 
-    const totalVotes = votes.length;
+    // Calcular la cantidad real de electores únicos que votaron en este cargo
+    const uniqueVotersCount = new Set(votes.map(v => v.votante_id)).size;
+
     const resultados = Array.from(candidateVotes.entries()).map(([candidatoId, total]) => ({
       candidato: votes.find(v => v.candidato_id === candidatoId)?.candidato!,
       total_votos: total,
-      porcentaje: totalVotes > 0 ? (total / totalVotes) * 100 : 0,
+      porcentaje: uniqueVotersCount > 0 ? (total / uniqueVotersCount) * 100 : 0,
     })).sort((a, b) => b.total_votos - a.total_votos);
 
     const cargo = votes[0]?.cargo;
@@ -57,7 +59,7 @@ export const votoService = {
     return {
       cargo: cargo!,
       resultados,
-      total_votos: totalVotes,
+      total_votos: uniqueVotersCount, // Representa la cantidad real de votantes
     };
   },
 
@@ -79,7 +81,7 @@ export const votoService = {
   async getDashboardStats(): Promise<DashboardStats> {
     const [totalVotantes, totalVotos, election] = await Promise.all([
       supabase.from('votantes').select('id', { count: 'exact', head: true }),
-      supabase.from('votos').select('id', { count: 'exact', head: true }),
+      supabase.from('votantes').select('id', { count: 'exact', head: true }).eq('ya_voto', true),
       supabase.from('elections').select('*').eq('estado', 'abierta').single(),
     ]);
 
