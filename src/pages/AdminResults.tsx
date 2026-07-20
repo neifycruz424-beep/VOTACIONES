@@ -220,6 +220,30 @@ export const AdminResults: React.FC = () => {
 
                 if (filteredCandidatesList.length === 0) return null;
 
+                // Preparar datos para los gráficos:
+                // Si es Vocal, agrupamos por plancha para evitar redundancia y mostrar colores oficiales
+                const chartData = isVocal
+                  ? planchas.map(plancha => {
+                      const candidateRes = positionResult.resultados.find(
+                        res => res.candidato.plancha_id === plancha.id
+                      );
+                      return {
+                        name: plancha.nombre,
+                        total_votos: candidateRes ? candidateRes.total_votos : 0,
+                        porcentaje: candidateRes ? candidateRes.porcentaje : 0,
+                        color: plancha.color || '#3B82F6',
+                      };
+                    }).sort((a, b) => b.total_votos - a.total_votos)
+                  : filteredCandidatesList.map((res, index) => {
+                      const plancha = planchas.find(p => p.id === res.candidato.plancha_id);
+                      return {
+                        name: res.candidato.nombre,
+                        total_votos: res.total_votos,
+                        porcentaje: res.porcentaje,
+                        color: plancha?.color || COLORS[index % COLORS.length],
+                      };
+                    });
+
                 return (
                   <Card key={positionResult.cargo.id} className="bg-slate-900/60 backdrop-blur-xl border border-white/10 shadow-2xl rounded-2xl overflow-hidden">
                     <div className="p-6 border-b border-white/5 bg-slate-950/20 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
@@ -230,7 +254,7 @@ export const AdminResults: React.FC = () => {
                         </p>
                       </div>
                       <div className="px-4 py-1.5 bg-blue-500/10 text-blue-400 rounded-full text-xs font-semibold border border-blue-500/20">
-                        Votos en cargo: <span className="text-white font-bold">{filteredCandidatesList.reduce((sum, r) => sum + r.total_votos, 0)}</span>
+                        Votos en cargo: <span className="text-white font-bold">{positionResult.total_votos}</span>
                       </div>
                     </div>
                     
@@ -240,12 +264,16 @@ export const AdminResults: React.FC = () => {
                         <div className="bg-slate-950/20 p-4 rounded-xl border border-white/5">
                           <h3 className="text-xs font-bold tracking-widest text-slate-500 uppercase mb-4 text-center">Distribución de Votos</h3>
                           <ResponsiveContainer width="100%" height={260}>
-                            <BarChart data={filteredCandidatesList}>
+                            <BarChart data={chartData}>
                               <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
-                              <XAxis dataKey="candidato.nombre" stroke="#94a3b8" angle={-15} textAnchor="end" height={50} tick={{ fontSize: 11 }} />
+                              <XAxis dataKey="name" stroke="#94a3b8" angle={-15} textAnchor="end" height={50} tick={{ fontSize: 11 }} />
                               <YAxis stroke="#94a3b8" tick={{ fontSize: 11 }} />
                               <Tooltip contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', color: '#fff', borderRadius: '8px' }} />
-                              <Bar dataKey="total_votos" fill="#3B82F6" radius={[4, 4, 0, 0]} />
+                              <Bar dataKey="total_votos" radius={[4, 4, 0, 0]}>
+                                {chartData.map((entry, index) => (
+                                  <Cell key={`cell-${index}`} fill={entry.color} />
+                                ))}
+                              </Bar>
                             </BarChart>
                           </ResponsiveContainer>
                         </div>
@@ -256,20 +284,17 @@ export const AdminResults: React.FC = () => {
                           <ResponsiveContainer width="100%" height={260}>
                             <PieChart>
                               <Pie
-                                data={filteredCandidatesList}
+                                data={chartData}
                                 cx="50%"
                                 cy="50%"
                                 labelLine={true}
-                                label={(entry: any) => {
-                                  const result = filteredCandidatesList.find(r => r.candidato.nombre === entry.payload.candidato.nombre);
-                                  return result ? `${result.candidato.nombre}: ${result.porcentaje.toFixed(1)}%` : '';
-                                }}
+                                label={(entry: any) => `${entry.name}: ${entry.payload.porcentaje.toFixed(1)}%`}
                                 outerRadius={75}
                                 fill="#8884d8"
                                 dataKey="total_votos"
                               >
-                                {filteredCandidatesList.map((_, index) => (
-                                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                                {chartData.map((entry, index) => (
+                                  <Cell key={`cell-${index}`} fill={entry.color} />
                                 ))}
                               </Pie>
                               <Tooltip contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', color: '#fff', borderRadius: '8px' }} />
