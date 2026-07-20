@@ -91,7 +91,7 @@ export const VoterIdentification: React.FC = () => {
           <div className="text-center mt-6">
             <div className="flex justify-center mb-4">
               <img 
-                src="/company_logo.jpg" 
+                src="/company_logo.png" 
                 alt="Logo de la Empresa" 
                 className="w-20 h-20 rounded-2xl object-cover shadow-xl shadow-blue-500/15 border border-white/10"
               />

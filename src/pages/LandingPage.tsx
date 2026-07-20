@@ -23,7 +23,7 @@ export const LandingPage: React.FC = () => {
           <div className="mb-10">
             <div className="flex justify-center mb-6">
               <img 
-                src="/company_logo.jpg" 
+                src="/company_logo.png" 
                 alt="Logo de la Empresa" 
                 className="w-24 h-24 rounded-2xl object-cover shadow-xl shadow-blue-500/20 border border-white/10 hover:scale-105 transition-transform duration-300"
               />

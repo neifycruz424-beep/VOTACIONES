@@ -22,7 +22,7 @@ export const VotingSuccess: React.FC = () => {
         <CardContent className="p-10 text-center">
           <div className="mb-8 flex flex-col items-center">
             <img 
-              src="/company_logo.jpg" 
+              src="/company_logo.png" 
               alt="Logo" 
               className="w-16 h-16 rounded-xl object-cover border border-white/10 shadow-md mb-6"
             />

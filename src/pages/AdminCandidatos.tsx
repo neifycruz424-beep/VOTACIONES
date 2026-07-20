@@ -303,7 +303,7 @@ export const AdminCandidatos: React.FC = () => {
       <div className="hidden print:block bg-white text-black p-8 min-h-screen">
         <div className="flex items-center justify-between border-b-2 border-gray-300 pb-4 mb-6">
           <div className="flex items-center gap-4">
-            <img src="/company_logo.jpg" alt="Logo" className="w-16 h-16 rounded-xl object-cover border border-gray-300 shadow-sm" />
+            <img src="/company_logo.png" alt="Logo" className="w-16 h-16 rounded-xl object-cover border border-gray-300 shadow-sm" />
             <div>
               <h1 className="text-2xl font-bold uppercase tracking-tight text-gray-900">Planilla de Candidatos</h1>
               <p className="text-sm text-gray-500 font-medium">Elecciones Internas 2026</p>
