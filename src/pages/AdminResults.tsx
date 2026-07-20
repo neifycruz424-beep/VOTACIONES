@@ -7,6 +7,7 @@ import { votoService } from '../services/votoService';
 import { planchaService } from '../services/planchaService';
 import type { PositionResults, Plancha } from '../types';
 import { ArrowLeft, Trophy, BarChart3, Medal, Printer } from 'lucide-react';
+import { obtenerUrlDirectaDrive } from '../utils/cedulaValidador';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 
 const COLORS = ['#3B82F6', '#EF4444', '#10B981', '#F59E0B', '#8B5CF6', '#EC4899'];
@@ -336,7 +337,7 @@ export const AdminResults: React.FC = () => {
                               <div className="flex items-center space-x-4 min-w-0">
                                 {result.candidato.foto ? (
                                   <img
-                                    src={result.candidato.foto}
+                                    src={obtenerUrlDirectaDrive(result.candidato.foto)}
                                     alt={result.candidato.nombre}
                                     className="w-14 h-14 rounded-full object-cover border border-white/10 shadow-sm shrink-0"
                                   />
@@ -461,7 +462,7 @@ export const AdminResults: React.FC = () => {
                   {winners.map((result, idx) => (
                     <div key={result.candidato.id} className="flex items-center gap-4 p-3 bg-white border border-gray-100 rounded-lg shadow-sm">
                       {result.candidato.foto ? (
-                        <img src={result.candidato.foto} alt={result.candidato.nombre} className="w-12 h-12 rounded-full object-cover border border-gray-200 shadow-sm" />
+                        <img src={obtenerUrlDirectaDrive(result.candidato.foto)} alt={result.candidato.nombre} className="w-12 h-12 rounded-full object-cover border border-gray-200 shadow-sm" />
                       ) : (
                         <div className="w-12 h-12 rounded-full bg-gray-200 border border-gray-200 flex items-center justify-center text-gray-400 font-bold text-sm">
                           {result.candidato.nombre.charAt(0)}

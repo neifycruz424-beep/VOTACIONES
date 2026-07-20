@@ -10,6 +10,7 @@ import { cargoService } from '../services/cargoService';
 import { planchaService } from '../services/planchaService';
 import type { Candidato, Cargo, Plancha } from '../types';
 import { Plus, Pencil, Trash2, ArrowLeft, Upload, Printer } from 'lucide-react';
+import { obtenerUrlDirectaDrive } from '../utils/cedulaValidador';
 
 export const AdminCandidatos: React.FC = () => {
   const navigate = useNavigate();
@@ -214,7 +215,7 @@ export const AdminCandidatos: React.FC = () => {
                   <div className="flex items-center space-x-4 mb-4">
                     {candidato.foto ? (
                       <img
-                        src={candidato.foto}
+                        src={obtenerUrlDirectaDrive(candidato.foto)}
                         alt={candidato.nombre}
                         className="w-16 h-16 rounded-full object-cover border border-gray-200 shadow-sm"
                       />
@@ -269,7 +270,7 @@ export const AdminCandidatos: React.FC = () => {
             <label className="block text-sm font-medium text-gray-700">Foto del Candidato</label>
             <div className="flex items-center space-x-4 p-3 bg-gray-50 rounded-lg border border-gray-200">
               {formData.foto ? (
-                <img src={formData.foto} alt="Preview" className="w-16 h-16 rounded-full object-cover border border-gray-300 shadow-sm" />
+                <img src={obtenerUrlDirectaDrive(formData.foto)} alt="Preview" className="w-16 h-16 rounded-full object-cover border border-gray-300 shadow-sm" />
               ) : (
                 <div className="w-16 h-16 rounded-full bg-gray-200 flex items-center justify-center border border-gray-300 shadow-sm">
                   <span className="text-gray-400 text-xs">Sin Foto</span>
@@ -410,7 +411,7 @@ export const AdminCandidatos: React.FC = () => {
                         {cargoCandidatos.map((cand) => (
                           <div key={cand.id} className="flex items-center gap-3 p-2 bg-white border border-gray-150 rounded-lg shadow-sm">
                             {cand.foto ? (
-                              <img src={cand.foto} alt={cand.nombre} className="w-10 h-10 rounded-full object-cover border border-gray-200" />
+                              <img src={obtenerUrlDirectaDrive(cand.foto)} alt={cand.nombre} className="w-10 h-10 rounded-full object-cover border border-gray-200" />
                             ) : (
                               <div className="w-10 h-10 rounded-full bg-gray-100 border border-gray-200 flex items-center justify-center text-gray-400 font-bold text-xs">
                                 {cand.nombre.charAt(0)}

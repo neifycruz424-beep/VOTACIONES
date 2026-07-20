@@ -93,3 +93,29 @@ export function calcularSimilitud(n1: string, n2: string): boolean {
   return false;
 }
 
+/**
+ * Convierte un enlace estándar de Google Drive en un enlace directo para imágenes.
+ * Soporta formatos de compartir y visualizar de Google Drive.
+ */
+export function obtenerUrlDirectaDrive(url: string | null | undefined): string {
+  if (!url) return '';
+  
+  const trimUrl = url.trim();
+  
+  if (trimUrl.includes('drive.google.com')) {
+    // Buscar el ID en formato estándar: /file/d/[ID]/view...
+    const matchD = trimUrl.match(/\/d\/([a-zA-Z0-9_-]+)/);
+    if (matchD && matchD[1]) {
+      return `https://lh3.googleusercontent.com/d/${matchD[1]}`;
+    }
+    
+    // Buscar el ID en formato de descarga directa o consulta: ?id=[ID]
+    const matchId = trimUrl.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+    if (matchId && matchId[1]) {
+      return `https://lh3.googleusercontent.com/d/${matchId[1]}`;
+    }
+  }
+  
+  return trimUrl;
+}
+

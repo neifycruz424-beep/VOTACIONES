@@ -8,6 +8,7 @@ import { LoadingSpinner } from '../components/ui/LoadingSpinner';
 import { planchaService } from '../services/planchaService';
 import type { Plancha } from '../types';
 import { Plus, Pencil, Trash2, ArrowLeft } from 'lucide-react';
+import { obtenerUrlDirectaDrive } from '../utils/cedulaValidador';
 
 export const AdminPlanchas: React.FC = () => {
   const navigate = useNavigate();
@@ -117,12 +118,20 @@ export const AdminPlanchas: React.FC = () => {
             <Card key={plancha.id}>
               <CardContent className="p-6">
                 <div className="flex items-center space-x-4 mb-4">
-                  <div
-                    className="w-16 h-16 rounded-full flex items-center justify-center text-white font-bold text-2xl shrink-0"
-                    style={{ backgroundColor: plancha.color }}
-                  >
-                    {plancha.nombre.charAt(0)}
-                  </div>
+                  {plancha.logo ? (
+                    <img 
+                      src={obtenerUrlDirectaDrive(plancha.logo)} 
+                      alt={plancha.nombre}
+                      className="w-16 h-16 rounded-xl object-cover border border-gray-200 shrink-0 bg-gray-50"
+                    />
+                  ) : (
+                    <div
+                      className="w-16 h-16 rounded-full flex items-center justify-center text-white font-bold text-2xl shrink-0"
+                      style={{ backgroundColor: plancha.color }}
+                    >
+                      {plancha.nombre.charAt(0)}
+                    </div>
+                  )}
                   <div>
                     <h3 className="font-semibold text-gray-900 text-lg">{plancha.nombre}</h3>
                     {plancha.eslogan && (

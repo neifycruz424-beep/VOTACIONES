@@ -8,6 +8,7 @@ import { cargoService } from '../services/cargoService';
 import { candidatoService } from '../services/candidatoService';
 import { planchaService } from '../services/planchaService';
 import { votoService } from '../services/votoService';
+import { obtenerUrlDirectaDrive } from '../utils/cedulaValidador';
 import type { Cargo, Candidato, Plancha, Votante, VoteSelection } from '../types';
 import { ArrowLeft, User, Award, ShieldAlert, Check } from 'lucide-react';
 
@@ -170,13 +171,21 @@ export const VotingPage: React.FC = () => {
               >
                 {/* Plancha Selection Header */}
                 <div className="flex items-center justify-between pb-5 border-b border-white/10 mb-6">
-                  <div className="flex items-center gap-3">
-                    <span 
-                      className="w-4 h-4 rounded-full border border-white/20 inline-block shrink-0"
-                      style={{ backgroundColor: plancha.color }}
-                    ></span>
-                    <div>
-                      <h2 className="text-2xl font-black tracking-tight text-white uppercase">
+                  <div className="flex items-center gap-3 min-w-0">
+                    {plancha.logo ? (
+                      <img 
+                        src={obtenerUrlDirectaDrive(plancha.logo)} 
+                        alt={`Logo ${plancha.nombre}`}
+                        className="w-12 h-12 rounded-xl object-cover border border-white/10 shadow-md shrink-0 bg-white/10"
+                      />
+                    ) : (
+                      <span 
+                        className="w-5 h-5 rounded-full border border-white/20 inline-block shrink-0 animate-pulse"
+                        style={{ backgroundColor: plancha.color }}
+                      ></span>
+                    )}
+                    <div className="min-w-0">
+                      <h2 className="text-2xl font-black tracking-tight text-white uppercase truncate">
                         {plancha.nombre}
                       </h2>
                       {plancha.eslogan && (
@@ -217,7 +226,7 @@ export const VotingPage: React.FC = () => {
                             <div key={candidato.id} className="flex items-center gap-3 p-2.5 bg-slate-950/20 rounded-xl border border-white/5">
                               {candidato.foto ? (
                                 <img
-                                  src={candidato.foto}
+                                  src={obtenerUrlDirectaDrive(candidato.foto)}
                                   alt={candidato.nombre}
                                   className="w-10 h-10 rounded-full object-cover border border-white/10 shadow-sm shrink-0"
                                 />
