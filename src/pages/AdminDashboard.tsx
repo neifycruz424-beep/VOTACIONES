@@ -4,6 +4,7 @@ import { Button } from '../components/ui/Button';
 import { Card, CardContent } from '../components/ui/Card';
 import { LoadingSpinner } from '../components/ui/LoadingSpinner';
 import { votoService } from '../services/votoService';
+import { supabase } from '../lib/supabase';
 import type { DashboardStats } from '../types';
 import { Users, Vote, TrendingUp, Power, Settings, BarChart3, UserPlus, Users2, LogOut, RefreshCw } from 'lucide-react';
 
@@ -36,6 +37,61 @@ export const AdminDashboard: React.FC = () => {
   const handleLogout = () => {
     localStorage.removeItem('isAdmin');
     navigate('/');
+  };
+
+  const handleToggleElection = async () => {
+    setIsLoading(true);
+    try {
+      // 1. Obtener todas las elecciones registradas
+      const { data: allElections, error: errAll } = await supabase
+        .from('elections')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (errAll) throw errAll;
+
+      const activeElection = allElections?.find(e => e.estado === 'abierta');
+
+      if (activeElection) {
+        // Si hay una elección abierta, cerrarla
+        const confirmed = window.confirm('¿Está seguro de que desea CERRAR la votación? Los electores ya no podrán emitir votos.');
+        if (confirmed) {
+          await supabase
+            .from('elections')
+            .update({ estado: 'cerrada' })
+            .eq('id', activeElection.id);
+          alert('La votación ha sido CERRADA con éxito.');
+        }
+      } else {
+        // Si la votación está cerrada, abrirla
+        const confirmed = window.confirm('¿Está seguro de que desea ABRIR la votación? Los electores podrán iniciar sesión y votar.');
+        if (confirmed) {
+          if (allElections && allElections.length > 0) {
+            // Abrir la última elección existente
+            await supabase
+              .from('elections')
+              .update({ estado: 'abierta' })
+              .eq('id', allElections[0].id);
+          } else {
+            // Si no existe ninguna fila, crear una nueva abierta
+            await supabase
+              .from('elections')
+              .insert({
+                nombre: 'Elecciones Generales 2026',
+                estado: 'abierta'
+              });
+          }
+          alert('La votación ha sido ABIERTA con éxito.');
+        }
+      }
+
+      await loadStats();
+    } catch (err) {
+      console.error('Error toggling election status:', err);
+      alert('Ocurrió un error al cambiar el estado de la votación.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleResetElection = async () => {
@@ -158,16 +214,23 @@ export const AdminDashboard: React.FC = () => {
               </CardContent>
             </Card>
 
-            <Card className="bg-white/95 backdrop-blur-xl shadow-2xl border-0">
+            <Card 
+              className="bg-white/95 backdrop-blur-xl shadow-2xl border-0 cursor-pointer hover:scale-105 transition-all duration-300 hover:shadow-green-500/10"
+              onClick={handleToggleElection}
+            >
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-gray-600">Estado</p>
-                    <p className={`text-2xl font-bold ${stats.estado_eleccion === 'abierta' ? 'text-green-600' : 'text-red-600'}`}>
+                    <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Estado (Hacer Clic)</p>
+                    <p className={`text-2xl font-bold mt-1 ${stats.estado_eleccion === 'abierta' ? 'text-green-600' : 'text-red-600'}`}>
                       {stats.estado_eleccion === 'abierta' ? 'Abierta' : 'Cerrada'}
                     </p>
                   </div>
-                  <div className={`w-14 h-14 rounded-full flex items-center justify-center shadow-lg ${stats.estado_eleccion === 'abierta' ? 'bg-gradient-to-br from-green-500 to-emerald-500' : 'bg-gradient-to-br from-red-500 to-rose-500'}`}>
+                  <div className={`w-14 h-14 rounded-full flex items-center justify-center shadow-lg transition-all ${
+                    stats.estado_eleccion === 'abierta' 
+                      ? 'bg-gradient-to-br from-green-500 to-emerald-500 animate-pulse shadow-green-500/20' 
+                      : 'bg-gradient-to-br from-red-500 to-rose-500 shadow-red-500/20'
+                  }`}>
                     <Power className="w-7 h-7 text-white" />
                   </div>
                 </div>

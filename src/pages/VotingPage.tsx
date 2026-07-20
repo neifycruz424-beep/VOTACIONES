@@ -266,34 +266,34 @@ export const VotingPage: React.FC = () => {
           title="Confirmación de Voto por Plancha"
           size="md"
         >
-          <div className="space-y-6 text-white max-h-[75vh] overflow-y-auto pr-1">
-            <div className="flex items-center gap-3 bg-blue-500/10 border border-blue-500/25 p-4 rounded-xl text-slate-300 text-sm">
-              <Award className="w-6 h-6 text-blue-400 shrink-0" />
+          <div className="space-y-6 text-gray-800 max-h-[75vh] overflow-y-auto pr-1">
+            <div className="flex items-center gap-3 bg-blue-50/50 border border-blue-200 p-4 rounded-xl text-gray-700 text-sm">
+              <Award className="w-6 h-6 text-blue-600 shrink-0" />
               <p>
                 Al confirmar, registrarás tu voto para la <strong>{selectedPlancha?.nombre}</strong>. Todos sus candidatos serán votados para sus respectivos puestos.
               </p>
             </div>
 
-            <div className="bg-slate-950/40 p-5 border border-white/5 rounded-xl space-y-3">
-              <div className="flex justify-between items-center pb-2 border-b border-white/10">
-                <span className="text-sm font-bold text-slate-400">Plancha Elegida:</span>
-                <span className="text-lg font-black uppercase text-white" style={{ color: selectedPlancha?.color }}>
+            <div className="bg-gray-50 p-5 border border-gray-200 rounded-xl space-y-3">
+              <div className="flex justify-between items-center pb-2 border-b border-gray-200">
+                <span className="text-sm font-bold text-gray-500">Plancha Elegida:</span>
+                <span className="text-lg font-black uppercase text-gray-950" style={{ color: selectedPlancha?.color }}>
                   {selectedPlancha?.nombre}
                 </span>
               </div>
               <div className="space-y-3 pt-2">
-                <p className="text-[10px] font-extrabold uppercase tracking-widest text-slate-500">Gabinete Propuesto:</p>
+                <p className="text-[10px] font-extrabold uppercase tracking-widest text-gray-400">Gabinete Propuesto:</p>
                 {cargos.map((cargo) => {
                   const cargoCandidatos = candidatos.filter(
                     c => c.plancha_id === selectedPlanchaId && c.cargo_id === cargo.id
                   );
                   if (cargoCandidatos.length === 0) return null;
                   return (
-                    <div key={cargo.id} className="flex justify-between items-start text-xs py-1.5 border-b border-white/5 last:border-0">
-                      <span className="text-slate-400 font-semibold">{cargo.nombre}:</span>
+                    <div key={cargo.id} className="flex justify-between items-start text-xs py-1.5 border-b border-gray-150 last:border-0">
+                      <span className="text-gray-500 font-semibold">{cargo.nombre}:</span>
                       <div className="text-right max-w-[65%]">
                         {cargoCandidatos.map(c => (
-                          <div key={c.id} className="text-white font-bold truncate">{c.nombre}</div>
+                          <div key={c.id} className="text-gray-900 font-bold truncate">{c.nombre}</div>
                         ))}
                       </div>
                     </div>
@@ -302,12 +302,12 @@ export const VotingPage: React.FC = () => {
               </div>
             </div>
 
-            <div className="flex flex-col sm:flex-row justify-end gap-3 pt-4 border-t border-white/5">
+            <div className="flex flex-col sm:flex-row justify-end gap-3 pt-4 border-t border-gray-150">
               <Button
                 variant="outline"
                 onClick={() => setShowConfirmModal(false)}
                 disabled={isSubmitting}
-                className="border-white/10 text-slate-300 hover:text-white hover:bg-white/5 py-3"
+                className="border-gray-300 text-gray-700 hover:text-gray-900 hover:bg-gray-50 py-3"
               >
                 Modificar
               </Button>
