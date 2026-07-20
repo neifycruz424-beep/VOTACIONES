@@ -280,15 +280,10 @@ export const AdminAuditoria: React.FC = () => {
         )}
 
         {/* Signature section */}
-        <div className="grid grid-cols-2 gap-12 mt-20 pt-12 border-t border-gray-200">
-          <div className="text-center">
-            <div className="w-48 border-b border-gray-400 mx-auto mb-2"></div>
-            <p className="text-xs font-bold text-gray-800">Presidente del Comité Electoral</p>
-            <p className="text-[10px] text-gray-400">Firma y Sello</p>
-          </div>
-          <div className="text-center">
-            <div className="w-48 border-b border-gray-400 mx-auto mb-2"></div>
-            <p className="text-xs font-bold text-gray-800">Secretario de la Mesa Electoral</p>
+        <div className="mt-20 pt-12 border-t border-gray-200 flex flex-col items-center">
+          <div className="text-center w-64">
+            <div className="border-b border-gray-400 mb-2"></div>
+            <p className="text-xs font-bold text-gray-800">Encargado de Elecciones</p>
             <p className="text-[10px] text-gray-400">Firma y Sello</p>
           </div>
         </div>
