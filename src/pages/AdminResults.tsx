@@ -288,7 +288,18 @@ export const AdminResults: React.FC = () => {
                                 cx="50%"
                                 cy="50%"
                                 labelLine={true}
-                                label={(entry: any) => `${entry.name}: ${entry.payload.porcentaje.toFixed(1)}%`}
+                                label={({ x, y, textAnchor, name, payload }: any) => (
+                                  <text 
+                                    x={x} 
+                                    y={y} 
+                                    fill="#fff" 
+                                    textAnchor={textAnchor} 
+                                    dominantBaseline="central"
+                                    style={{ fontSize: '10px', fontWeight: '500' }}
+                                  >
+                                    {name}: {(payload?.porcentaje || 0).toFixed(1)}%
+                                  </text>
+                                )}
                                 outerRadius={75}
                                 fill="#8884d8"
                                 dataKey="total_votos"
@@ -544,7 +555,18 @@ export const AdminResults: React.FC = () => {
                           cx="50%"
                           cy="50%"
                           labelLine={true}
-                          label={(entry: any) => `${entry.name}: ${entry.payload.porcentaje.toFixed(1)}%`}
+                          label={({ x, y, textAnchor, name, payload }: any) => (
+                            <text 
+                              x={x} 
+                              y={y} 
+                              fill="#374151" 
+                              textAnchor={textAnchor} 
+                              dominantBaseline="central"
+                              style={{ fontSize: '9px', fontWeight: '600' }}
+                            >
+                              {name}: {(payload?.porcentaje || 0).toFixed(1)}%
+                            </text>
+                          )}
                           outerRadius={55}
                           fill="#8884d8"
                           dataKey="total_votos"
