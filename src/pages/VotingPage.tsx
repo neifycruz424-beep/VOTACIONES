@@ -8,6 +8,7 @@ import { cargoService } from '../services/cargoService';
 import { candidatoService } from '../services/candidatoService';
 import { planchaService } from '../services/planchaService';
 import { votoService } from '../services/votoService';
+import { electionService } from '../services/electionService';
 import { obtenerUrlDirectaDrive } from '../utils/cedulaValidador';
 import type { Cargo, Candidato, Plancha, Votante, VoteSelection } from '../types';
 import { ArrowLeft, User, Award, ShieldAlert, Check } from 'lucide-react';
@@ -60,6 +61,15 @@ export const VotingPage: React.FC = () => {
     setError('');
 
     try {
+      // Verificar si la elección sigue abierta antes de procesar el voto
+      const activeElection = await electionService.getActiveElection();
+      if (!activeElection) {
+        setError('La votación ha sido CERRADA por el administrador. No se puede registrar su voto.');
+        setIsSubmitting(false);
+        setShowConfirmModal(false);
+        return;
+      }
+
       // Get all candidates of the selected plancha
       const planchaCandidatos = candidatos.filter(c => c.plancha_id === selectedPlanchaId);
 

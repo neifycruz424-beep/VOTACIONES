@@ -7,7 +7,7 @@ export const electionService = {
       .from('elections')
       .select('*')
       .eq('estado', 'abierta')
-      .single();
+      .maybeSingle();
 
     if (error) throw error;
     return data;

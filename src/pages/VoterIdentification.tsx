@@ -4,6 +4,7 @@ import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 import { Card, CardContent, CardHeader } from '../components/ui/Card';
 import { votanteService } from '../services/votanteService';
+import { electionService } from '../services/electionService';
 import { User, ArrowLeft, Shield, Fingerprint, Sparkles } from 'lucide-react';
 import { validarCedula, formatearCedula, calcularSimilitud } from '../utils/cedulaValidador';
 
@@ -13,10 +14,42 @@ export const VoterIdentification: React.FC = () => {
   const [cedula, setCedula] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [isElectionClosed, setIsElectionClosed] = useState(false);
+
+  React.useEffect(() => {
+    checkElectionStatus();
+  }, []);
+
+  const checkElectionStatus = async () => {
+    try {
+      const activeElection = await electionService.getActiveElection();
+      if (!activeElection) {
+        setIsElectionClosed(true);
+        setError('La votación se encuentra CERRADA en este momento. No se permite el ingreso de votantes.');
+      }
+    } catch (err) {
+      console.error('Error checking election status:', err);
+      setIsElectionClosed(true);
+      setError('La votación se encuentra CERRADA en este momento.');
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+
+    // Double check election status on submit
+    try {
+      const activeElection = await electionService.getActiveElection();
+      if (!activeElection) {
+        setIsElectionClosed(true);
+        setError('La votación ha sido cerrada por el administrador. No puedes votar.');
+        return;
+      }
+    } catch (err) {
+      setError('Error al validar el estado de la elección.');
+      return;
+    }
     
     const cleanNombre = nombre.trim();
     const cleanCedula = cedula.replace(/[^0-9]/g, ''); // Keep only numeric digits for JCE checking and database matching
@@ -152,7 +185,7 @@ export const VoterIdentification: React.FC = () => {
                   placeholder="Escriba su nombre y apellido"
                   value={nombre}
                   onChange={(e) => setNombre(e.target.value)}
-                  disabled={isLoading}
+                  disabled={isLoading || isElectionClosed}
                   autoFocus
                   required
                   className="bg-slate-950/60 border-white/10 text-white placeholder-slate-500 focus:ring-blue-500 focus:border-transparent py-3 pl-10"
@@ -172,7 +205,7 @@ export const VoterIdentification: React.FC = () => {
                   placeholder="Ej: 001-0000000-0"
                   value={cedula}
                   onChange={(e) => setCedula(formatearCedula(e.target.value))}
-                  disabled={isLoading}
+                  disabled={isLoading || isElectionClosed}
                   required
                   className="bg-slate-950/60 border-white/10 text-white placeholder-slate-500 focus:ring-blue-500 focus:border-transparent py-3 pl-10"
                 />
@@ -182,9 +215,9 @@ export const VoterIdentification: React.FC = () => {
               </div>
             </div>
 
-            <Button
+             <Button
               type="submit"
-              disabled={isLoading || !nombre.trim() || !cedula.trim()}
+              disabled={isLoading || isElectionClosed || !nombre.trim() || !cedula.trim()}
               className="w-full py-4.5 text-base font-semibold text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 shadow-xl shadow-blue-600/10 hover:shadow-blue-500/20 active:scale-[0.98] transition-all duration-300 rounded-xl"
               isLoading={isLoading}
             >
