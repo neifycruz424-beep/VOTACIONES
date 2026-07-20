@@ -468,6 +468,99 @@ export const AdminResults: React.FC = () => {
             );
           })}
         </div>
+
+        {/* Anexo de Gráficos de Resultados (visible solo en impresión, forzando salto de página) */}
+        <div style={{ pageBreakBefore: 'always' }} className="pt-8 mt-8">
+          <div className="flex items-center justify-between border-b-2 border-gray-300 pb-4 mb-6">
+            <div className="flex items-center gap-4">
+              <img src="/company_logo.png" alt="Logo" className="w-16 h-16 rounded-xl object-cover border border-gray-300 shadow-sm" />
+              <div>
+                <h1 className="text-2xl font-bold uppercase tracking-tight text-gray-900">Anexo Estadístico: Gráficos de Votación</h1>
+                <p className="text-sm text-gray-500 font-medium">Distribución y porcentaje de votos por cada cargo electivo</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="space-y-8">
+            {results.map((positionResult) => {
+              const isVocal = positionResult.cargo.nombre.toLowerCase().includes('vocal');
+              
+              const filteredCandidatesList = selectedPlanchaFilter
+                ? positionResult.resultados.filter(r => r.candidato.plancha_id === selectedPlanchaFilter)
+                : positionResult.resultados;
+
+              if (filteredCandidatesList.length === 0) return null;
+
+              // Agrupar datos por plancha para versión de impresión
+              const printChartData = isVocal
+                ? planchas.map(plancha => {
+                    const candidateRes = positionResult.resultados.find(
+                      res => res.candidato.plancha_id === plancha.id
+                    );
+                    return {
+                      name: plancha.nombre,
+                      total_votos: candidateRes ? candidateRes.total_votos : 0,
+                      porcentaje: candidateRes ? candidateRes.porcentaje : 0,
+                      color: plancha.color || '#3B82F6',
+                    };
+                  }).sort((a, b) => b.total_votos - a.total_votos)
+                : filteredCandidatesList.map((res, index) => {
+                    const plancha = planchas.find(p => p.id === res.candidato.plancha_id);
+                    return {
+                      name: res.candidato.nombre,
+                      total_votos: res.total_votos,
+                      porcentaje: res.porcentaje,
+                      color: plancha?.color || COLORS[index % COLORS.length],
+                    };
+                  });
+
+              return (
+                <div key={positionResult.cargo.id} className="border border-gray-200 rounded-xl p-5 bg-gray-50/50" style={{ pageBreakInside: 'avoid' }}>
+                  <h3 className="text-base font-bold text-gray-900 border-b border-gray-200 pb-2 mb-4">
+                    Gráficos de Resultados - {positionResult.cargo.nombre}
+                  </h3>
+                  <div className="flex flex-col sm:flex-row items-center justify-around gap-6">
+                    {/* Gráfico de Barras para Impresión */}
+                    <div className="bg-white p-3 border border-gray-200 rounded-lg shadow-sm">
+                      <p className="text-[10px] font-bold text-gray-400 text-center uppercase tracking-wider mb-3">Distribución de Votos</p>
+                      <BarChart width={320} height={180} data={printChartData}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                        <XAxis dataKey="name" stroke="#64748b" tick={{ fontSize: 9 }} height={30} />
+                        <YAxis stroke="#64748b" tick={{ fontSize: 9 }} />
+                        <Bar dataKey="total_votos" radius={[3, 3, 0, 0]}>
+                          {printChartData.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={entry.color} />
+                          ))}
+                        </Bar>
+                      </BarChart>
+                    </div>
+
+                    {/* Gráfico Circular para Impresión */}
+                    <div className="bg-white p-3 border border-gray-200 rounded-lg shadow-sm">
+                      <p className="text-[10px] font-bold text-gray-400 text-center uppercase tracking-wider mb-3">Porcentaje de Votación</p>
+                      <PieChart width={320} height={180}>
+                        <Pie
+                          data={printChartData}
+                          cx="50%"
+                          cy="50%"
+                          labelLine={true}
+                          label={(entry: any) => `${entry.name}: ${entry.payload.porcentaje.toFixed(1)}%`}
+                          outerRadius={55}
+                          fill="#8884d8"
+                          dataKey="total_votos"
+                        >
+                          {printChartData.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={entry.color} />
+                          ))}
+                        </Pie>
+                      </PieChart>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
       </div>
     </div>
   );
