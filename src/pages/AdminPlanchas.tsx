@@ -15,7 +15,7 @@ export const AdminPlanchas: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [editingPlancha, setEditingPlancha] = useState<Plancha | null>(null);
-  const [formData, setFormData] = useState({ nombre: '', color: '#3B82F6', logo: '' });
+  const [formData, setFormData] = useState({ nombre: '', color: '#3B82F6', logo: '', eslogan: '' });
 
   useEffect(() => {
     const isAdmin = localStorage.getItem('isAdmin');
@@ -48,7 +48,7 @@ export const AdminPlanchas: React.FC = () => {
       }
       setShowModal(false);
       setEditingPlancha(null);
-      setFormData({ nombre: '', color: '#3B82F6', logo: '' });
+      setFormData({ nombre: '', color: '#3B82F6', logo: '', eslogan: '' });
       loadPlanchas();
     } catch (err) {
       console.error('Error saving plancha:', err);
@@ -57,7 +57,12 @@ export const AdminPlanchas: React.FC = () => {
 
   const handleEdit = (plancha: Plancha) => {
     setEditingPlancha(plancha);
-    setFormData({ nombre: plancha.nombre, color: plancha.color, logo: plancha.logo || '' });
+    setFormData({ 
+      nombre: plancha.nombre, 
+      color: plancha.color, 
+      logo: plancha.logo || '',
+      eslogan: plancha.eslogan || ''
+    });
     setShowModal(true);
   };
 
@@ -74,7 +79,7 @@ export const AdminPlanchas: React.FC = () => {
 
   const handleAdd = () => {
     setEditingPlancha(null);
-    setFormData({ nombre: '', color: '#3B82F6', logo: '' });
+    setFormData({ nombre: '', color: '#3B82F6', logo: '', eslogan: '' });
     setShowModal(true);
   };
 
@@ -113,13 +118,16 @@ export const AdminPlanchas: React.FC = () => {
               <CardContent className="p-6">
                 <div className="flex items-center space-x-4 mb-4">
                   <div
-                    className="w-16 h-16 rounded-full flex items-center justify-center text-white font-bold text-2xl"
+                    className="w-16 h-16 rounded-full flex items-center justify-center text-white font-bold text-2xl shrink-0"
                     style={{ backgroundColor: plancha.color }}
                   >
                     {plancha.nombre.charAt(0)}
                   </div>
                   <div>
                     <h3 className="font-semibold text-gray-900 text-lg">{plancha.nombre}</h3>
+                    {plancha.eslogan && (
+                      <p className="text-sm text-gray-500 italic mb-1">"{plancha.eslogan}"</p>
+                    )}
                     <div className="flex items-center space-x-2">
                       <div
                         className="w-6 h-6 rounded"
@@ -148,7 +156,7 @@ export const AdminPlanchas: React.FC = () => {
         onClose={() => {
           setShowModal(false);
           setEditingPlancha(null);
-          setFormData({ nombre: '', color: '#3B82F6', logo: '' });
+          setFormData({ nombre: '', color: '#3B82F6', logo: '', eslogan: '' });
         }}
         title={editingPlancha ? 'Editar Plancha' : 'Agregar Plancha'}
       >
@@ -158,6 +166,12 @@ export const AdminPlanchas: React.FC = () => {
             value={formData.nombre}
             onChange={(e) => setFormData({ ...formData, nombre: e.target.value })}
             required
+          />
+          <Input
+            label="Eslogan (Opcional)"
+            placeholder="Ej: Unidos por el Progreso"
+            value={formData.eslogan}
+            onChange={(e) => setFormData({ ...formData, eslogan: e.target.value })}
           />
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Color</label>
@@ -188,7 +202,7 @@ export const AdminPlanchas: React.FC = () => {
               onClick={() => {
                 setShowModal(false);
                 setEditingPlancha(null);
-                setFormData({ nombre: '', color: '#3B82F6', logo: '' });
+                setFormData({ nombre: '', color: '#3B82F6', logo: '', eslogan: '' });
               }}
             >
               Cancelar

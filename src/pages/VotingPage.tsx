@@ -169,12 +169,19 @@ export const VotingPage: React.FC = () => {
                 <div className="flex items-center justify-between pb-5 border-b border-white/10 mb-6">
                   <div className="flex items-center gap-3">
                     <span 
-                      className="w-4 h-4 rounded-full border border-white/20 inline-block"
+                      className="w-4 h-4 rounded-full border border-white/20 inline-block shrink-0"
                       style={{ backgroundColor: plancha.color }}
                     ></span>
-                    <h2 className="text-2xl font-black tracking-tight text-white uppercase">
-                      {plancha.nombre}
-                    </h2>
+                    <div>
+                      <h2 className="text-2xl font-black tracking-tight text-white uppercase">
+                        {plancha.nombre}
+                      </h2>
+                      {plancha.eslogan && (
+                        <p className="text-xs text-slate-400 italic font-medium mt-0.5">
+                          "{plancha.eslogan}"
+                        </p>
+                      )}
+                    </div>
                   </div>
 
                   <div

@@ -21,6 +21,7 @@ export interface Plancha {
   nombre: string;
   color: string;
   logo: string | null;
+  eslogan?: string | null;
   created_at: string;
   updated_at: string;
 }

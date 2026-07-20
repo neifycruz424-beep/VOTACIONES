@@ -385,11 +385,16 @@ export const AdminCandidatos: React.FC = () => {
           {printedPlanchas.map((plancha) => (
             <div key={plancha.id} className="border border-gray-200 rounded-xl p-5 bg-gray-50/20">
               <h2 
-                className="text-xl font-bold border-b-2 pb-2 mb-4 uppercase tracking-wider text-center" 
+                className="text-xl font-bold border-b-2 pb-2 mb-1 uppercase tracking-wider text-center" 
                 style={{ color: plancha.color, borderColor: plancha.color + '50' }}
               >
                 {plancha.nombre}
               </h2>
+              {plancha.eslogan && (
+                <p className="text-xs text-gray-500 italic text-center mb-4">
+                  "{plancha.eslogan}"
+                </p>
+              )}
               <div className="space-y-5">
                 {cargos.map((cargo) => {
                   const cargoCandidatos = candidatos.filter(

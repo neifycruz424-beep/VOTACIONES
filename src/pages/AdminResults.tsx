@@ -143,19 +143,20 @@ export const AdminResults: React.FC = () => {
               {!selectedPlanchaFilter && (
                 <Card className="bg-slate-900/60 backdrop-blur-xl border border-white/10 shadow-2xl rounded-2xl overflow-hidden">
                   <div className="h-1.5 bg-gradient-to-r from-blue-600 via-yellow-500 to-red-500"></div>
-                  <CardContent className="p-6">
-                    <h2 className="text-xl font-bold tracking-tight text-white mb-5 text-center uppercase tracking-widest text-slate-300">
+                  <CardContent className="p-6">                    <h2 className="text-xl font-bold tracking-tight text-white mb-5 text-center uppercase tracking-widest text-slate-300">
                       Reporte General de Supremacía
                     </h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
                       {/* Plancha 1 Stats */}
                       <div className="p-5 bg-blue-500/5 border border-blue-500/20 rounded-xl text-center">
                         <span className="text-xs font-bold tracking-widest text-blue-400 uppercase">Total Votos - {planchas[0]?.nombre || 'Plancha 1'}</span>
+                        {planchas[0]?.eslogan && <p className="text-[11px] text-blue-300/80 italic mt-0.5 font-medium">"{planchas[0]?.eslogan}"</p>}
                         <p className="text-4xl font-black text-white mt-2">{getPlanchaTotalVotes(planchas[0]?.id)}</p>
                       </div>
                       {/* Plancha 2 Stats */}
                       <div className="p-5 bg-red-500/5 border border-red-500/20 rounded-xl text-center">
                         <span className="text-xs font-bold tracking-widest text-red-400 uppercase">Total Votos - {planchas[1]?.nombre || 'Plancha 2'}</span>
+                        {planchas[1]?.eslogan && <p className="text-[11px] text-red-300/80 italic mt-0.5 font-medium">"{planchas[1]?.eslogan}"</p>}
                         <p className="text-4xl font-black text-white mt-2">{getPlanchaTotalVotes(planchas[1]?.id)}</p>
                       </div>
                     </div>
@@ -192,6 +193,9 @@ export const AdminResults: React.FC = () => {
                       {getPlanchaTotalVotes(selectedPlanchaFilter)}
                     </h2>
                     <p className="text-sm text-slate-400 mt-1">Filtrado para la directiva de: <span className="font-semibold text-white">{selectedPlanchaName}</span></p>
+                    {planchas.find(p => p.id === selectedPlanchaFilter)?.eslogan && (
+                      <p className="text-xs text-slate-500 italic mt-1.5">"{planchas.find(p => p.id === selectedPlanchaFilter)?.eslogan}"</p>
+                    )}
                   </CardContent>
                 </Card>
               )}
