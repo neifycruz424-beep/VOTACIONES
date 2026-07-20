@@ -89,8 +89,12 @@ export const VoterIdentification: React.FC = () => {
           </div>
           
           <div className="text-center mt-6">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-full mb-4 shadow-lg shadow-blue-500/15">
-              <Fingerprint className="w-8 h-8 text-white" />
+            <div className="flex justify-center mb-4">
+              <img 
+                src="/company_logo.jpg" 
+                alt="Logo de la Empresa" 
+                className="w-20 h-20 rounded-2xl object-cover shadow-xl shadow-blue-500/15 border border-white/10"
+              />
             </div>
             <h2 className="text-2xl font-bold tracking-tight text-white flex items-center justify-center gap-2">
               Identificación de Elector

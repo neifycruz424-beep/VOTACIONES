@@ -21,8 +21,12 @@ export const LandingPage: React.FC = () => {
 
         <CardContent className="p-10 md:p-14 text-center">
           <div className="mb-10">
-            <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-2xl mb-6 shadow-xl shadow-blue-500/15 rotate-3 hover:rotate-0 transition-transform duration-300">
-              <Vote className="w-10 h-10 text-white" />
+            <div className="flex justify-center mb-6">
+              <img 
+                src="/company_logo.jpg" 
+                alt="Logo de la Empresa" 
+                className="w-24 h-24 rounded-2xl object-cover shadow-xl shadow-blue-500/20 border border-white/10 hover:scale-105 transition-transform duration-300"
+              />
             </div>
             
             <div className="flex items-center justify-center gap-2 mb-3">

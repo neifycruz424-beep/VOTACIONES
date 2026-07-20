@@ -119,16 +119,23 @@ export const VotingPage: React.FC = () => {
         <Card className="mb-8 bg-slate-900/60 backdrop-blur-xl border border-white/10 shadow-2xl rounded-2xl overflow-hidden">
           <div className="h-1.5 bg-gradient-to-r from-blue-600 to-indigo-500"></div>
           <CardHeader className="pb-6 pt-8 px-8 border-b border-white/5">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-              <div>
-                <h1 className="text-3xl font-black tracking-tight bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent">
-                  Papeleta Digital de Votación
-                </h1>
-                <p className="text-slate-400 text-sm mt-1">
-                  Marque un candidato para cada uno de los cargos indicados abajo
-                </p>
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+              <div className="flex items-center gap-4">
+                <img 
+                  src="/company_logo.jpg" 
+                  alt="Logo" 
+                  className="w-14 h-14 rounded-xl object-cover border border-white/10 shadow-md shrink-0"
+                />
+                <div>
+                  <h1 className="text-2xl md:text-3xl font-black tracking-tight bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent">
+                    Papeleta Digital de Votación
+                  </h1>
+                  <p className="text-slate-400 text-sm mt-0.5">
+                    Marque un candidato para cada uno de los cargos indicados abajo
+                  </p>
+                </div>
               </div>
-              <div className="flex items-center gap-1.5 self-start px-3 py-1 bg-indigo-500/10 text-indigo-400 rounded-full text-xs font-semibold border border-indigo-500/20">
+              <div className="flex items-center gap-1.5 self-start md:self-center px-3 py-1 bg-indigo-500/10 text-indigo-400 rounded-full text-xs font-semibold border border-indigo-500/20">
                 ID Elector: {votante?.codigo}
               </div>
             </div>

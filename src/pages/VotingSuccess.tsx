@@ -20,7 +20,12 @@ export const VotingSuccess: React.FC = () => {
         <div className="h-2 bg-gradient-to-r from-emerald-500 via-teal-500 to-blue-500"></div>
 
         <CardContent className="p-10 text-center">
-          <div className="mb-8">
+          <div className="mb-8 flex flex-col items-center">
+            <img 
+              src="/company_logo.jpg" 
+              alt="Logo" 
+              className="w-16 h-16 rounded-xl object-cover border border-white/10 shadow-md mb-6"
+            />
             <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-full mb-6 shadow-xl shadow-emerald-500/20 animate-bounce">
               <CheckCircle2 className="w-10 h-10 text-white" />
             </div>
