@@ -190,31 +190,37 @@ export const VotingPage: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Candidates Slate list */}
-                <div className="space-y-4 flex-1">
+                {/* Candidates Slate list (displays multiple candidates per cargo, e.g. 4 Vocales) */}
+                <div className="space-y-5 flex-1">
                   <p className="text-xs font-semibold uppercase tracking-widest text-slate-500 mb-3">Integrantes del Gabinete</p>
                   {cargos.map((cargo) => {
-                    const candidato = planchaCandidatos.find(c => c.cargo_id === cargo.id);
+                    const cargoCandidatos = planchaCandidatos.filter(c => c.cargo_id === cargo.id);
+                    if (cargoCandidatos.length === 0) return null;
+
                     return (
-                      <div key={cargo.id} className="flex items-center gap-4 p-3.5 bg-slate-950/20 rounded-xl border border-white/5">
-                        {candidato?.foto ? (
-                          <img
-                            src={candidato.foto}
-                            alt={candidato.nombre}
-                            className="w-12 h-12 rounded-full object-cover border border-white/10 shadow-sm shrink-0"
-                          />
-                        ) : (
-                          <div className="w-12 h-12 rounded-full bg-slate-800 border border-white/10 flex items-center justify-center shrink-0">
-                            <User className="text-slate-400 w-5 h-5" />
-                          </div>
-                        )}
-                        <div className="min-w-0">
-                          <span className="text-[10px] font-extrabold uppercase tracking-widest text-blue-500/80 block">
-                            {cargo.nombre}
-                          </span>
-                          <span className="font-bold text-white text-sm mt-0.5 block truncate">
-                            {candidato?.nombre || 'No registrado'}
-                          </span>
+                      <div key={cargo.id} className="space-y-2">
+                        <span className="text-[10px] font-extrabold uppercase tracking-widest text-blue-500/80 block">
+                          {cargo.nombre}
+                        </span>
+                        <div className="space-y-1.5">
+                          {cargoCandidatos.map((candidato) => (
+                            <div key={candidato.id} className="flex items-center gap-3 p-2.5 bg-slate-950/20 rounded-xl border border-white/5">
+                              {candidato.foto ? (
+                                <img
+                                  src={candidato.foto}
+                                  alt={candidato.nombre}
+                                  className="w-10 h-10 rounded-full object-cover border border-white/10 shadow-sm shrink-0"
+                                />
+                              ) : (
+                                <div className="w-10 h-10 rounded-full bg-slate-800 border border-white/10 flex items-center justify-center shrink-0">
+                                  <User className="text-slate-400 w-4 h-4" />
+                                </div>
+                              )}
+                              <span className="font-bold text-white text-sm truncate">
+                                {candidato.nombre}
+                              </span>
+                            </div>
+                          ))}
                         </div>
                       </div>
                     );
@@ -260,7 +266,7 @@ export const VotingPage: React.FC = () => {
           title="Confirmación de Voto por Plancha"
           size="md"
         >
-          <div className="space-y-6 text-white">
+          <div className="space-y-6 text-white max-h-[75vh] overflow-y-auto pr-1">
             <div className="flex items-center gap-3 bg-blue-500/10 border border-blue-500/25 p-4 rounded-xl text-slate-300 text-sm">
               <Award className="w-6 h-6 text-blue-400 shrink-0" />
               <p>
@@ -275,16 +281,21 @@ export const VotingPage: React.FC = () => {
                   {selectedPlancha?.nombre}
                 </span>
               </div>
-              <div className="space-y-2 pt-2">
+              <div className="space-y-3 pt-2">
                 <p className="text-[10px] font-extrabold uppercase tracking-widest text-slate-500">Gabinete Propuesto:</p>
                 {cargos.map((cargo) => {
-                  const candidato = candidatos.find(
+                  const cargoCandidatos = candidatos.filter(
                     c => c.plancha_id === selectedPlanchaId && c.cargo_id === cargo.id
                   );
+                  if (cargoCandidatos.length === 0) return null;
                   return (
-                    <div key={cargo.id} className="flex justify-between items-center text-xs py-1">
+                    <div key={cargo.id} className="flex justify-between items-start text-xs py-1.5 border-b border-white/5 last:border-0">
                       <span className="text-slate-400 font-semibold">{cargo.nombre}:</span>
-                      <span className="text-white font-bold">{candidato?.nombre || 'No registrado'}</span>
+                      <div className="text-right max-w-[65%]">
+                        {cargoCandidatos.map(c => (
+                          <div key={c.id} className="text-white font-bold truncate">{c.nombre}</div>
+                        ))}
+                      </div>
                     </div>
                   );
                 })}
