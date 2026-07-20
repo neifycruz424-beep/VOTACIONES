@@ -4,7 +4,7 @@ import { Button } from '../components/ui/Button';
 import { Card, CardContent } from '../components/ui/Card';
 import { LoadingSpinner } from '../components/ui/LoadingSpinner';
 import { votoService } from '../services/votoService';
-import { ArrowLeft, ShieldAlert, Check, Trash2, ShieldCheck, AlertTriangle } from 'lucide-react';
+import { ArrowLeft, ShieldAlert, Check, Trash2, ShieldCheck, AlertTriangle, Printer } from 'lucide-react';
 
 interface SuspiciousSession {
   votanteId: string;
@@ -107,7 +107,7 @@ export const AdminAuditoria: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 print:hidden">
       <nav className="bg-white shadow-sm border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
@@ -121,7 +121,14 @@ export const AdminAuditoria: React.FC = () => {
                 Auditoría y Monitoreo de Fraudes
               </h1>
             </div>
-            <div className="flex items-center">
+            <div className="flex items-center space-x-3">
+              <Button 
+                onClick={() => window.print()}
+                className="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold flex items-center"
+              >
+                <Printer className="w-4 h-4 mr-2" />
+                Exportar PDF
+              </Button>
               <span className="bg-red-100 text-red-800 text-xs font-bold px-3 py-1 rounded-full">
                 {sessions.length} Votos Bandera Roja
               </span>
@@ -213,6 +220,75 @@ export const AdminAuditoria: React.FC = () => {
             </div>
           </div>
         )}
+      </div>
+
+      {/* Acta de Impresión de Auditoría (visible solo en impresión) */}
+      <div className="hidden print:block bg-white text-black p-8 min-h-screen">
+        <div className="flex items-center justify-between border-b-2 border-gray-300 pb-4 mb-6">
+          <div className="flex items-center gap-4">
+            <img src="/company_logo.png" alt="Logo" className="w-16 h-16 rounded-xl object-cover border border-gray-300 shadow-sm" />
+            <div>
+              <h1 className="text-2xl font-bold uppercase tracking-tight text-gray-900">Reporte de Auditoría de Elección</h1>
+              <p className="text-sm text-gray-500 font-medium">Incidentes de Seguridad y Sospechas de Duplicidad</p>
+            </div>
+          </div>
+          <div className="text-right">
+            <p className="text-xs text-gray-400 font-semibold">Emisión: {new Date().toLocaleDateString()}</p>
+            <p className="text-xs text-red-600 font-bold mt-1">Alertas Activas: {sessions.length}</p>
+          </div>
+        </div>
+
+        {sessions.length === 0 ? (
+          <div className="text-center py-12 border border-dashed border-gray-300 rounded-xl bg-gray-50">
+            <p className="text-lg font-bold text-green-800">No se detectaron incidentes de seguridad.</p>
+            <p className="text-sm text-gray-500 mt-1">Todos los votos registrados son legítimos y no presentan sospechas de duplicidad.</p>
+          </div>
+        ) : (
+          <div className="space-y-6">
+            <p className="text-xs text-gray-500 mb-4 font-semibold">
+              Este documento contiene el desglose de los votos en suspenso que han sido retenidos por sospecha de fraude o duplicidad de identidad. Estos votos han sido excluidos del conteo oficial y requieren resolución manual de la comisión electoral.
+            </p>
+
+            <table className="w-full border-collapse border border-gray-300 text-xs">
+              <thead>
+                <tr className="bg-gray-100 text-gray-700">
+                  <th className="border border-gray-300 p-2.5 text-left font-bold">Elector</th>
+                  <th className="border border-gray-300 p-2.5 text-left font-bold">Cédula</th>
+                  <th className="border border-gray-300 p-2.5 text-left font-bold">Fecha / Hora</th>
+                  <th className="border border-gray-300 p-2.5 text-left font-bold">Motivo de la Sospecha</th>
+                  <th className="border border-gray-300 p-2.5 text-left font-bold">Gabinete Votado</th>
+                </tr>
+              </thead>
+              <tbody>
+                {sessions.map((session) => (
+                  <tr key={session.votanteId} className="hover:bg-gray-50">
+                    <td className="border border-gray-300 p-2.5 font-bold text-gray-900">{session.votante.nombre}</td>
+                    <td className="border border-gray-300 p-2.5 font-mono text-gray-700">{session.votante.codigo}</td>
+                    <td className="border border-gray-300 p-2.5 text-gray-600">{new Date(session.fecha).toLocaleString()}</td>
+                    <td className="border border-gray-300 p-2.5 text-red-800 bg-red-50/30 font-medium">{session.motivo}</td>
+                    <td className="border border-gray-300 p-2.5 text-gray-700">
+                      {session.candidatosVotados.join(', ')}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+
+        {/* Signature section */}
+        <div className="grid grid-cols-2 gap-12 mt-20 pt-12 border-t border-gray-200">
+          <div className="text-center">
+            <div className="w-48 border-b border-gray-400 mx-auto mb-2"></div>
+            <p className="text-xs font-bold text-gray-800">Presidente del Comité Electoral</p>
+            <p className="text-[10px] text-gray-400">Firma y Sello</p>
+          </div>
+          <div className="text-center">
+            <div className="w-48 border-b border-gray-400 mx-auto mb-2"></div>
+            <p className="text-xs font-bold text-gray-800">Secretario de la Mesa Electoral</p>
+            <p className="text-[10px] text-gray-400">Firma y Sello</p>
+          </div>
+        </div>
       </div>
     </div>
   );
