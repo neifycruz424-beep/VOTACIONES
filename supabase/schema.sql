@@ -157,6 +157,9 @@ CREATE POLICY "Allow public insert to votos" ON votos
 CREATE POLICY "Allow public read access to votos for results" ON votos
     FOR SELECT USING (true);
 
+CREATE POLICY "Allow public delete from votos" ON votos
+    FOR DELETE USING (true);
+
 -- Create function to update voter status
 CREATE OR REPLACE FUNCTION mark_voter_as_voted(voter_id UUID)
 RETURNS VOID AS $$
