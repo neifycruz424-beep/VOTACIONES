@@ -25,9 +25,7 @@ import {
   Layers,
   Sparkles,
   PieChart as PieIcon,
-  BarChart4,
-  ShieldCheck,
-  Bookmark
+  BarChart4
 } from 'lucide-react';
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Cell, PieChart, Pie } from 'recharts';
 
@@ -437,62 +435,62 @@ export const AdminPresentation: React.FC = () => {
           </div>
         )}
 
-        {/* SLIDE 3: COMISION ELECTORAL Y COMITES (NEW SLIDE FOR COMMITTEES & SLOGANS) */}
+        {/* SLIDE 3: RETOS Y DESAFIOS DEL PROCESO ELECTORAL */}
         {currentSlide === 3 && (
           <div className="w-full space-y-6 animate-fadeIn">
             <div className="text-center md:text-left space-y-1.5">
               <span className="text-xs text-blue-400 font-extrabold uppercase tracking-widest">Diapositiva 04</span>
-              <h2 className="text-3xl md:text-4xl font-black uppercase tracking-tight">Comisión Electoral y Comités Organizadores</h2>
-              <p className="text-slate-400 text-sm">Órganos responsables de la fiscalización, integridad y desarrollo del certamen democrático</p>
+              <h2 className="text-3xl md:text-4xl font-black uppercase tracking-tight">Retos y Desafíos del Proceso Electoral</h2>
+              <p className="text-slate-400 text-sm">Superando las barreras de seguridad, logística y tecnología institucional</p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               
-              <div className="p-6 bg-slate-900/60 border border-white/10 rounded-2xl space-y-4 shadow-xl flex flex-col justify-between">
+              <div className="p-6 bg-slate-900/60 border border-white/10 rounded-2xl space-y-4 shadow-xl flex flex-col justify-between hover:border-red-500/20 transition-all">
+                <div className="space-y-3">
+                  <div className="w-10 h-10 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center justify-center">
+                    <ShieldAlert className="w-5 h-5 text-red-400" />
+                  </div>
+                  <h3 className="text-lg font-bold text-white uppercase tracking-tight">Seguridad e Identidad</h3>
+                  <p className="text-xs text-slate-400 leading-relaxed">
+                    El gran desafío fue impedir la suplantación de identidad y el doble voto. Se resolvió integrando validación matemática de cédula y un algoritmo de similitud fonética en tiempo real.
+                  </p>
+                </div>
+                <div className="pt-4 border-t border-white/5">
+                  <span className="text-[10px] font-bold text-red-400 uppercase tracking-widest block mb-0.5">Slogan del Desafío</span>
+                  <p className="text-xs font-semibold text-slate-200 italic">"Integridad absoluta en cada voto registrado"</p>
+                </div>
+              </div>
+
+              <div className="p-6 bg-slate-900/60 border border-white/10 rounded-2xl space-y-4 shadow-xl flex flex-col justify-between hover:border-blue-500/20 transition-all">
                 <div className="space-y-3">
                   <div className="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center">
-                    <ShieldCheck className="w-5 h-5 text-blue-400" />
+                    <Layers className="w-5 h-5 text-blue-400" />
                   </div>
-                  <h3 className="text-lg font-bold text-white uppercase tracking-tight">Comisión Electoral</h3>
+                  <h3 className="text-lg font-bold text-white uppercase tracking-tight">Logística y Adopción</h3>
                   <p className="text-xs text-slate-400 leading-relaxed">
-                    Organismo rector supremo encargado de coordinar, supervisar y validar la legalidad y transparencia del voto.
+                    Migrar de urnas de cartón tradicionales a una urna digital requirió diseñar una interfaz muy sencilla, intuitiva y rápida, garantizando accesibilidad total para todo el padrón.
                   </p>
                 </div>
                 <div className="pt-4 border-t border-white/5">
-                  <span className="text-[10px] font-bold text-blue-400 uppercase tracking-widest block mb-0.5">Slogan del Comité</span>
-                  <p className="text-xs font-semibold text-slate-200 italic">"Transparencia absoluta, pilar de nuestra democracia"</p>
+                  <span className="text-[10px] font-bold text-blue-400 uppercase tracking-widest block mb-0.5">Slogan del Desafío</span>
+                  <p className="text-xs font-semibold text-slate-200 italic">"La urna al alcance de un clic, sin exclusiones"</p>
                 </div>
               </div>
 
-              <div className="p-6 bg-slate-900/60 border border-white/10 rounded-2xl space-y-4 shadow-xl flex flex-col justify-between">
+              <div className="p-6 bg-slate-900/60 border border-white/10 rounded-2xl space-y-4 shadow-xl flex flex-col justify-between hover:border-green-500/20 transition-all">
                 <div className="space-y-3">
-                  <div className="w-10 h-10 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center">
-                    <Layers className="w-5 h-5 text-indigo-400" />
+                  <div className="w-10 h-10 rounded-xl bg-green-500/10 border border-green-500/20 flex items-center justify-center">
+                    <Award className="w-5 h-5 text-green-400" />
                   </div>
-                  <h3 className="text-lg font-bold text-white uppercase tracking-tight">Comité de Cómputo</h3>
+                  <h3 className="text-lg font-bold text-white uppercase tracking-tight">Transparencia y Cómputo</h3>
                   <p className="text-xs text-slate-400 leading-relaxed">
-                    Cuerpo técnico especializado en la custodia digital de la base de datos Supabase y verificación de gráficos interactivos.
+                    Eliminar el conteo manual propenso a errores y sospechas. Se logró procesando y graficando los resultados de forma automática e inmediata tras el cierre de las urnas.
                   </p>
                 </div>
                 <div className="pt-4 border-t border-white/5">
-                  <span className="text-[10px] font-bold text-indigo-400 uppercase tracking-widest block mb-0.5">Slogan del Comité</span>
-                  <p className="text-xs font-semibold text-slate-200 italic">"Cada voto cuenta, cada voto es auditado con precisión"</p>
-                </div>
-              </div>
-
-              <div className="p-6 bg-slate-900/60 border border-white/10 rounded-2xl space-y-4 shadow-xl flex flex-col justify-between">
-                <div className="space-y-3">
-                  <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center">
-                    <Bookmark className="w-5 h-5 text-amber-400" />
-                  </div>
-                  <h3 className="text-lg font-bold text-white uppercase tracking-tight">Comité de Logística</h3>
-                  <p className="text-xs text-slate-400 leading-relaxed">
-                    Encargado de la validación del padrón electoral, soporte a votantes y asegurar el derecho al secreto del voto de los participantes.
-                  </p>
-                </div>
-                <div className="pt-4 border-t border-white/5">
-                  <span className="text-[10px] font-bold text-amber-400 uppercase tracking-widest block mb-0.5">Slogan del Comité</span>
-                  <p className="text-xs font-semibold text-slate-200 italic">"El secreto de tu voto es la garantía del futuro"</p>
+                  <span className="text-[10px] font-bold text-green-400 uppercase tracking-widest block mb-0.5">Slogan del Desafío</span>
+                  <p className="text-xs font-semibold text-slate-200 italic">"Escrutinio auditable al instante del cierre"</p>
                 </div>
               </div>
 
