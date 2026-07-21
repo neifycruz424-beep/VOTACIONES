@@ -25,7 +25,9 @@ import {
   Layers,
   Sparkles,
   PieChart as PieIcon,
-  BarChart4
+  BarChart4,
+  ShieldCheck,
+  Bookmark
 } from 'lucide-react';
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Cell, PieChart, Pie } from 'recharts';
 
@@ -165,8 +167,8 @@ export const AdminPresentation: React.FC = () => {
     }
   };
 
-  // Slides count changed to 9
-  const slidesCount = 9;
+  // Slides count changed to 10 to fit the new Committees slide
+  const slidesCount = 10;
 
   const nextSlide = () => {
     if (currentSlide < slidesCount - 1) {
@@ -283,7 +285,7 @@ export const AdminPresentation: React.FC = () => {
             <div className="pt-8 border-t border-white/5 grid grid-cols-2 gap-8 text-left max-w-lg mx-auto">
               <div>
                 <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Presentador</p>
-                <p className="text-sm font-bold text-slate-300">Responsable de Elecciones</p>
+                <p className="text-sm font-bold text-slate-300">Neify Cruz</p>
               </div>
               <div>
                 <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Fecha</p>
@@ -358,7 +360,7 @@ export const AdminPresentation: React.FC = () => {
           </div>
         )}
 
-        {/* SLIDE 2: ANALISIS DE PARTICIPACION (NEW CHART SLIDE) */}
+        {/* SLIDE 2: ANALISIS DE PARTICIPACION */}
         {currentSlide === 2 && (
           <div className="w-full space-y-6 animate-fadeIn">
             <div className="text-center md:text-left space-y-1.5">
@@ -435,11 +437,74 @@ export const AdminPresentation: React.FC = () => {
           </div>
         )}
 
-        {/* SLIDE 3: LAS PLANCHAS ELECTORALES */}
+        {/* SLIDE 3: COMISION ELECTORAL Y COMITES (NEW SLIDE FOR COMMITTEES & SLOGANS) */}
         {currentSlide === 3 && (
-          <div className="w-full space-y-8 animate-fadeIn">
+          <div className="w-full space-y-6 animate-fadeIn">
             <div className="text-center md:text-left space-y-1.5">
               <span className="text-xs text-blue-400 font-extrabold uppercase tracking-widest">Diapositiva 04</span>
+              <h2 className="text-3xl md:text-4xl font-black uppercase tracking-tight">Comisión Electoral y Comités Organizadores</h2>
+              <p className="text-slate-400 text-sm">Órganos responsables de la fiscalización, integridad y desarrollo del certamen democrático</p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              
+              <div className="p-6 bg-slate-900/60 border border-white/10 rounded-2xl space-y-4 shadow-xl flex flex-col justify-between">
+                <div className="space-y-3">
+                  <div className="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center">
+                    <ShieldCheck className="w-5 h-5 text-blue-400" />
+                  </div>
+                  <h3 className="text-lg font-bold text-white uppercase tracking-tight">Comisión Electoral</h3>
+                  <p className="text-xs text-slate-400 leading-relaxed">
+                    Organismo rector supremo encargado de coordinar, supervisar y validar la legalidad y transparencia del voto.
+                  </p>
+                </div>
+                <div className="pt-4 border-t border-white/5">
+                  <span className="text-[10px] font-bold text-blue-400 uppercase tracking-widest block mb-0.5">Slogan del Comité</span>
+                  <p className="text-xs font-semibold text-slate-200 italic">"Transparencia absoluta, pilar de nuestra democracia"</p>
+                </div>
+              </div>
+
+              <div className="p-6 bg-slate-900/60 border border-white/10 rounded-2xl space-y-4 shadow-xl flex flex-col justify-between">
+                <div className="space-y-3">
+                  <div className="w-10 h-10 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center">
+                    <Layers className="w-5 h-5 text-indigo-400" />
+                  </div>
+                  <h3 className="text-lg font-bold text-white uppercase tracking-tight">Comité de Cómputo</h3>
+                  <p className="text-xs text-slate-400 leading-relaxed">
+                    Cuerpo técnico especializado en la custodia digital de la base de datos Supabase y verificación de gráficos interactivos.
+                  </p>
+                </div>
+                <div className="pt-4 border-t border-white/5">
+                  <span className="text-[10px] font-bold text-indigo-400 uppercase tracking-widest block mb-0.5">Slogan del Comité</span>
+                  <p className="text-xs font-semibold text-slate-200 italic">"Cada voto cuenta, cada voto es auditado con precisión"</p>
+                </div>
+              </div>
+
+              <div className="p-6 bg-slate-900/60 border border-white/10 rounded-2xl space-y-4 shadow-xl flex flex-col justify-between">
+                <div className="space-y-3">
+                  <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center">
+                    <Bookmark className="w-5 h-5 text-amber-400" />
+                  </div>
+                  <h3 className="text-lg font-bold text-white uppercase tracking-tight">Comité de Logística</h3>
+                  <p className="text-xs text-slate-400 leading-relaxed">
+                    Encargado de la validación del padrón electoral, soporte a votantes y asegurar el derecho al secreto del voto de los participantes.
+                  </p>
+                </div>
+                <div className="pt-4 border-t border-white/5">
+                  <span className="text-[10px] font-bold text-amber-400 uppercase tracking-widest block mb-0.5">Slogan del Comité</span>
+                  <p className="text-xs font-semibold text-slate-200 italic">"El secreto de tu voto es la garantía del futuro"</p>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        )}
+
+        {/* SLIDE 4: LAS PLANCHAS ELECTORALES */}
+        {currentSlide === 4 && (
+          <div className="w-full space-y-8 animate-fadeIn">
+            <div className="text-center md:text-left space-y-1.5">
+              <span className="text-xs text-blue-400 font-extrabold uppercase tracking-widest">Diapositiva 05</span>
               <h2 className="text-3xl md:text-4xl font-black uppercase tracking-tight">Planchas Electorales Nominadas</h2>
               <p className="text-slate-400 text-sm">Organizaciones políticas que se postularon para conformar la directiva</p>
             </div>
@@ -494,11 +559,11 @@ export const AdminPresentation: React.FC = () => {
           </div>
         )}
 
-        {/* SLIDE 4: SEGURIDAD Y ANTIFRAUDE */}
-        {currentSlide === 4 && (
+        {/* SLIDE 5: SEGURIDAD Y ANTIFRAUDE */}
+        {currentSlide === 5 && (
           <div className="w-full space-y-8 animate-fadeIn">
             <div className="text-center md:text-left space-y-1.5">
-              <span className="text-xs text-blue-400 font-extrabold uppercase tracking-widest">Diapositiva 05</span>
+              <span className="text-xs text-blue-400 font-extrabold uppercase tracking-widest">Diapositiva 06</span>
               <h2 className="text-3xl md:text-4xl font-black uppercase tracking-tight">Garantía de Transparencia y Antifraude</h2>
               <p className="text-slate-400 text-sm">Medidas de seguridad criptográfica y auditoría en tiempo real</p>
             </div>
@@ -551,11 +616,11 @@ export const AdminPresentation: React.FC = () => {
           </div>
         )}
 
-        {/* SLIDE 5: GRAFICO DE RESULTADOS GENERALES (SUPREMACIA) */}
-        {currentSlide === 5 && (
+        {/* SLIDE 6: GRAFICO DE RESULTADOS GENERALES (SUPREMACIA) */}
+        {currentSlide === 6 && (
           <div className="w-full space-y-6 animate-fadeIn">
             <div className="text-center md:text-left space-y-1.5">
-              <span className="text-xs text-blue-400 font-extrabold uppercase tracking-widest">Diapositiva 06</span>
+              <span className="text-xs text-blue-400 font-extrabold uppercase tracking-widest">Diapositiva 07</span>
               <h2 className="text-3xl md:text-4xl font-black uppercase tracking-tight">Distribución de Resultados Electorales (Supremacía)</h2>
               <p className="text-slate-400 text-sm">Gráfico comparativo del caudal electoral de las planchas directivas</p>
             </div>
@@ -613,11 +678,11 @@ export const AdminPresentation: React.FC = () => {
           </div>
         )}
 
-        {/* SLIDE 6: RESULTADOS DETALLADOS - VOCALES (NEW CHART SLIDE) */}
-        {currentSlide === 6 && (
+        {/* SLIDE 7: RESULTADOS DETALLADOS - VOCALES */}
+        {currentSlide === 7 && (
           <div className="w-full space-y-6 animate-fadeIn">
             <div className="text-center md:text-left space-y-1.5">
-              <span className="text-xs text-blue-400 font-extrabold uppercase tracking-widest">Diapositiva 07</span>
+              <span className="text-xs text-blue-400 font-extrabold uppercase tracking-widest">Diapositiva 08</span>
               <h2 className="text-3xl md:text-4xl font-black uppercase tracking-tight">Escrutinio Específico: Vocales de la Directiva</h2>
               <p className="text-slate-400 text-sm">Distribución y porcentaje de votos para la representación de Vocales</p>
             </div>
@@ -711,11 +776,11 @@ export const AdminPresentation: React.FC = () => {
           </div>
         )}
 
-        {/* SLIDE 7: ADJUDICACION DE DIRECTIVA GANADORA */}
-        {currentSlide === 7 && (
+        {/* SLIDE 8: ADJUDICACION DE DIRECTIVA GANADORA */}
+        {currentSlide === 8 && (
           <div className="w-full space-y-6 animate-fadeIn">
             <div className="text-center md:text-left space-y-1.5">
-              <span className="text-xs text-blue-400 font-extrabold uppercase tracking-widest">Diapositiva 08</span>
+              <span className="text-xs text-blue-400 font-extrabold uppercase tracking-widest">Diapositiva 09</span>
               <h2 className="text-3xl md:text-4xl font-black uppercase tracking-tight">Directiva Electa Proclamada</h2>
               <p className="text-slate-400 text-sm">Gabinete de candidatos ganadores que asumirá los cargos institucionales</p>
             </div>
@@ -779,8 +844,8 @@ export const AdminPresentation: React.FC = () => {
           </div>
         )}
 
-        {/* SLIDE 8: CIERRE / PREGUNTAS */}
-        {currentSlide === 8 && (
+        {/* SLIDE 9: CIERRE / PREGUNTAS (WITH NEIFY CRUZ SIGNATURE IN FABULOUS CURSIVE) */}
+        {currentSlide === 9 && (
           <div className="text-center space-y-6 max-w-2xl animate-fadeIn">
             <div className="flex justify-center">
               <div className="w-20 h-20 bg-gradient-to-tr from-yellow-500 to-amber-500 rounded-full flex items-center justify-center shadow-2xl shadow-yellow-500/10">
@@ -797,12 +862,19 @@ export const AdminPresentation: React.FC = () => {
               </p>
             </div>
 
-            <div className="pt-8 border-t border-white/5 max-w-sm mx-auto space-y-3 text-slate-400 text-xs">
+            <div className="pt-6 border-t border-white/5 max-w-sm mx-auto space-y-3 text-slate-400 text-xs">
               <p className="font-bold text-slate-500 uppercase tracking-widest text-[10px]">Cierre del Acta de Elección</p>
-              <div className="p-4 bg-slate-900/60 border border-white/5 rounded-xl text-center">
-                <div className="w-32 border-b border-slate-700 mx-auto mb-2 mt-2"></div>
-                <p className="text-xs font-extrabold text-slate-200">Responsable de Elecciones</p>
-                <p className="text-[10px] text-slate-500 uppercase">Firma y Certificación Digital</p>
+              <div className="p-4 bg-slate-900/60 border border-white/5 rounded-2xl text-center relative overflow-hidden">
+                {/* Dynamically load Great Vibes cursive font */}
+                <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet" />
+                
+                {/* Fabulous handwritten cursive signature */}
+                <p className="text-4xl text-yellow-400 font-normal my-2 select-none" style={{ fontFamily: "'Great Vibes', cursive" }}>
+                  Neify Cruz
+                </p>
+                <div className="w-36 border-b border-slate-700 mx-auto mb-2"></div>
+                <p className="text-xs font-extrabold text-slate-200">Neify Cruz</p>
+                <p className="text-[10px] text-slate-500 uppercase font-semibold">Responsable de Elecciones</p>
               </div>
             </div>
           </div>
