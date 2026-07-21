@@ -18,6 +18,7 @@ export const AdminResults: React.FC = () => {
   const [planchas, setPlanchas] = useState<Plancha[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedPlanchaFilter, setSelectedPlanchaFilter] = useState<string>('');
+  const [printMode, setPrintMode] = useState<'complete' | 'winner'>('complete');
 
   useEffect(() => {
     const isAdmin = localStorage.getItem('isAdmin');
@@ -122,11 +123,25 @@ export const AdminResults: React.FC = () => {
 
                 <Button 
                   variant="outline"
-                  onClick={() => window.print()}
+                  onClick={() => {
+                    setPrintMode('complete');
+                    setTimeout(() => window.print(), 100);
+                  }}
                   className="border-white/10 text-slate-300 hover:text-white hover:bg-white/5"
                 >
                   <Printer className="w-4 h-4 mr-2" />
-                  Exportar PDF
+                  Exportar Acta Completa
+                </Button>
+
+                <Button 
+                  onClick={() => {
+                    setPrintMode('winner');
+                    setTimeout(() => window.print(), 100);
+                  }}
+                  className="bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-xl"
+                >
+                  <Trophy className="w-4 h-4 mr-2" />
+                  Exportar Acta Ganadora
                 </Button>
                 <Button 
                   onClick={loadData}
@@ -395,163 +410,153 @@ export const AdminResults: React.FC = () => {
         </div>
       </div>
 
-      {/* Acta de Impresión de Ganadores (visible solo en impresión) */}
-      <div className="hidden print:block bg-white text-black p-8 min-h-screen">
-        <div className="flex items-center justify-between border-b-2 border-gray-300 pb-4 mb-6">
-          <div className="flex items-center gap-4">
-            <img src="/company_logo.png" alt="Logo" className="w-16 h-16 rounded-xl object-cover border border-gray-300 shadow-sm" />
-            <div>
-              <h1 className="text-2xl font-bold uppercase tracking-tight text-gray-900">Acta Oficial de Ganadores</h1>
-              <p className="text-sm text-gray-500 font-medium">
-                {selectedPlanchaFilter ? `Filtrado por: ${selectedPlanchaName}` : 'Elecciones Internas 2026'}
-              </p>
-            </div>
-          </div>
-          <div className="text-right">
-            <p className="text-xs text-gray-400 font-semibold">Fecha de emisión: {new Date().toLocaleDateString()}</p>
-          </div>
-        </div>
-
-        {/* Reporte de Supremacía en PDF (only print when no filter is active) */}
-        {!selectedPlanchaFilter ? (
-          <div className="grid grid-cols-2 gap-4 mb-8 p-4 bg-gray-50 border border-gray-200 rounded-xl items-center text-center">
-            <div className="p-3 border-r border-gray-200">
-              <span className="text-xs text-gray-500 font-bold uppercase tracking-wider">Votos Totales - {planchas[0]?.nombre || 'Plancha 1'}</span>
-              <p className="text-3xl font-black text-blue-600 mt-1">{getPlanchaTotalVotes(planchas[0]?.id)}</p>
-            </div>
-            <div className="p-3">
-              <span className="text-xs text-gray-500 font-bold uppercase tracking-wider">Votos Totales - {planchas[1]?.nombre || 'Plancha 2'}</span>
-              <p className="text-3xl font-black text-red-600 mt-1">{getPlanchaTotalVotes(planchas[1]?.id)}</p>
-            </div>
-            <div className="col-span-2 text-center pt-3 border-t border-gray-200 text-xs font-bold text-gray-700">
-              DIFERENCIA: {Math.abs(getPlanchaTotalVotes(planchas[0]?.id) - getPlanchaTotalVotes(planchas[1]?.id))} VOTOS • ELECCIÓN DE SUPREMACÍA: <span className="text-indigo-600 font-extrabold uppercase">{
-                getPlanchaTotalVotes(planchas[0]?.id) > getPlanchaTotalVotes(planchas[1]?.id)
-                  ? planchas[0]?.nombre
-                  : getPlanchaTotalVotes(planchas[1]?.id) > getPlanchaTotalVotes(planchas[0]?.id)
-                    ? planchas[1]?.nombre
-                    : 'EMPATE'
-              }</span>
-            </div>
-          </div>
-        ) : (
-          <div className="p-4 bg-gray-50 border border-gray-200 rounded-xl mb-8 text-center">
-            <span className="text-xs text-gray-500 font-bold uppercase tracking-wider">Votos Totales Acumulados para la Directiva</span>
-            <p className="text-3xl font-black text-gray-900 mt-1">{getPlanchaTotalVotes(selectedPlanchaFilter)}</p>
-          </div>
-        )}
-
-        <div className="space-y-6">
-          {results.map((positionResult) => {
-            const isVocal = positionResult.cargo.nombre.toLowerCase().includes('vocal');
-            const maxWinners = isVocal ? 4 : 1;
-
-            const filteredCandidatesList = selectedPlanchaFilter
-              ? positionResult.resultados.filter(r => r.candidato.plancha_id === selectedPlanchaFilter)
-              : positionResult.resultados;
-
-            const winners = filteredCandidatesList.filter((_, idx) => idx < maxWinners && _.total_votos > 0);
-
-            if (winners.length === 0) return null;
-
-            return (
-              <div key={positionResult.cargo.id} className="border border-gray-200 rounded-xl p-5 bg-gray-50/50">
-                <h2 className="text-lg font-bold text-gray-900 border-b border-gray-200 pb-2 mb-4">
-                  Cargo: {positionResult.cargo.nombre}
-                </h2>
-                <div className="grid grid-cols-2 gap-4">
-                  {winners.map((result, idx) => (
-                    <div key={result.candidato.id} className="flex items-center gap-4 p-3 bg-white border border-gray-100 rounded-lg shadow-sm">
-                      {result.candidato.foto ? (
-                        <img src={obtenerUrlDirectaDrive(result.candidato.foto)} alt={result.candidato.nombre} className="w-12 h-12 rounded-full object-cover border border-gray-200 shadow-sm" />
-                      ) : (
-                        <div className="w-12 h-12 rounded-full bg-gray-200 border border-gray-200 flex items-center justify-center text-gray-400 font-bold text-sm">
-                          {result.candidato.nombre.charAt(0)}
-                        </div>
-                      )}
-                      <div>
-                        <h3 className="font-bold text-gray-800 text-sm leading-snug">{result.candidato.nombre}</h3>
-                        <p className="text-xs text-blue-600 font-bold mt-0.5">
-                          {isVocal ? `Vocal Electo #${idx + 1}` : 'Candidato Electo'}
-                        </p>
-                        <p className="text-[10px] text-gray-400 font-medium mt-0.5">
-                          Plancha: {result.candidato.plancha?.nombre} • Votos: {result.total_votos} ({result.porcentaje.toFixed(1)}%)
-                        </p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            );
-          })}
-        </div>
-
-        {/* Anexo de Gráficos de Resultados (visible solo en impresión, forzando salto de página) */}
-        <div style={{ pageBreakBefore: 'always' }} className="pt-8 mt-8">
+      {/* Acta de Impresión de Ganadores (visible solo en impresión cuando printMode === 'complete') */}
+      {printMode === 'complete' && (
+        <div className="hidden print:block bg-white text-black p-8 min-h-screen">
           <div className="flex items-center justify-between border-b-2 border-gray-300 pb-4 mb-6">
             <div className="flex items-center gap-4">
               <img src="/company_logo.png" alt="Logo" className="w-16 h-16 rounded-xl object-cover border border-gray-300 shadow-sm" />
               <div>
-                <h1 className="text-2xl font-bold uppercase tracking-tight text-gray-900">Anexo Estadístico: Gráficos de Votación</h1>
-                <p className="text-sm text-gray-500 font-medium">Distribución y porcentaje de votos por cada cargo electivo</p>
+                <h1 className="text-2xl font-bold uppercase tracking-tight text-gray-900">Acta Oficial de Ganadores</h1>
+                <p className="text-sm text-gray-500 font-medium">
+                  {selectedPlanchaFilter ? `Filtrado por: ${selectedPlanchaName}` : 'Elecciones Internas 2026'}
+                </p>
               </div>
+            </div>
+            <div className="text-right">
+              <p className="text-xs text-gray-400 font-semibold">Fecha de emisión: {new Date().toLocaleDateString()}</p>
             </div>
           </div>
 
-          <div className="space-y-8">
+          {/* Reporte de Supremacía en PDF */}
+          {!selectedPlanchaFilter ? (
+            <div className="grid grid-cols-2 gap-4 mb-8 p-4 bg-gray-50 border border-gray-200 rounded-xl items-center text-center">
+              <div className="p-3 border-r border-gray-200">
+                <span className="text-xs text-gray-500 font-bold uppercase tracking-wider">Votos Totales - {planchas[0]?.nombre || 'Plancha 1'}</span>
+                <p className="text-3xl font-black text-blue-600 mt-1">{getPlanchaTotalVotes(planchas[0]?.id)}</p>
+              </div>
+              <div className="p-3">
+                <span className="text-xs text-gray-500 font-bold uppercase tracking-wider">Votos Totales - {planchas[1]?.nombre || 'Plancha 2'}</span>
+                <p className="text-3xl font-black text-red-600 mt-1">{getPlanchaTotalVotes(planchas[1]?.id)}</p>
+              </div>
+              <div className="col-span-2 text-center pt-3 border-t border-gray-200 text-xs font-bold text-gray-700">
+                DIFERENCIA: {Math.abs(getPlanchaTotalVotes(planchas[0]?.id) - getPlanchaTotalVotes(planchas[1]?.id))} VOTOS • ELECCIÓN DE SUPREMACÍA: <span className="text-indigo-600 font-extrabold uppercase">{
+                  getPlanchaTotalVotes(planchas[0]?.id) > getPlanchaTotalVotes(planchas[1]?.id)
+                    ? planchas[0]?.nombre
+                    : getPlanchaTotalVotes(planchas[1]?.id) > getPlanchaTotalVotes(planchas[0]?.id)
+                      ? planchas[1]?.nombre
+                      : 'EMPATE'
+                }</span>
+              </div>
+            </div>
+          ) : (
+            <div className="p-4 bg-gray-50 border border-gray-200 rounded-xl mb-8 text-center">
+              <span className="text-xs text-gray-500 font-bold uppercase tracking-wider">Votos Totales Acumulados para la Directiva</span>
+              <p className="text-3xl font-black text-gray-900 mt-1">{getPlanchaTotalVotes(selectedPlanchaFilter)}</p>
+            </div>
+          )}
+
+          <div className="space-y-6">
             {results.map((positionResult) => {
               const isVocal = positionResult.cargo.nombre.toLowerCase().includes('vocal');
-              
+              const maxWinners = isVocal ? 4 : 1;
+
               const filteredCandidatesList = selectedPlanchaFilter
                 ? positionResult.resultados.filter(r => r.candidato.plancha_id === selectedPlanchaFilter)
                 : positionResult.resultados;
 
-              if (filteredCandidatesList.length === 0) return null;
+              const winners = filteredCandidatesList.filter((_, idx) => idx < maxWinners && _.total_votos > 0);
 
-              // Agrupar datos por plancha para versión de impresión
-              const printChartData = isVocal
-                ? planchas.map(plancha => {
-                    const candidateRes = positionResult.resultados.find(
-                      res => res.candidato.plancha_id === plancha.id
-                    );
-                    return {
-                      name: plancha.nombre,
-                      total_votos: candidateRes ? candidateRes.total_votos : 0,
-                      porcentaje: candidateRes ? candidateRes.porcentaje : 0,
-                      color: plancha.color || '#3B82F6',
-                    };
-                  }).sort((a, b) => b.total_votos - a.total_votos)
-                : filteredCandidatesList.map((res, index) => {
-                    const plancha = planchas.find(p => p.id === res.candidato.plancha_id);
-                    return {
-                      name: res.candidato.nombre,
-                      total_votos: res.total_votos,
-                      porcentaje: res.porcentaje,
-                      color: plancha?.color || COLORS[index % COLORS.length],
-                    };
-                  });
+              if (winners.length === 0) return null;
 
               return (
-                <div key={positionResult.cargo.id} className="border border-gray-200 rounded-xl p-5 bg-gray-50/50" style={{ pageBreakInside: 'avoid' }}>
-                  <h3 className="text-base font-bold text-gray-900 border-b border-gray-200 pb-2 mb-4">
-                    Gráficos de Resultados - {positionResult.cargo.nombre}
-                  </h3>
-                  <div className="flex flex-col sm:flex-row items-center justify-around gap-6">
-                    {/* Gráfico de Barras para Impresión */}
-                    <div className="bg-white p-3 border border-gray-200 rounded-lg shadow-sm">
-                      <p className="text-[10px] font-bold text-gray-400 text-center uppercase tracking-wider mb-3">Distribución de Votos</p>
-                      <BarChart width={320} height={180} data={printChartData}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-                        <XAxis dataKey="name" stroke="#64748b" tick={{ fontSize: 9 }} height={30} />
-                        <YAxis stroke="#64748b" tick={{ fontSize: 9 }} />
-                        <Bar dataKey="total_votos" radius={[3, 3, 0, 0]}>
-                          {printChartData.map((entry, index) => (
-                            <Cell key={`cell-${index}`} fill={entry.color} />
-                          ))}
-                        </Bar>
-                      </BarChart>
+                <div key={positionResult.cargo.id} className="border border-gray-200 rounded-xl p-5 bg-gray-50/50">
+                  <h2 className="text-lg font-bold text-gray-900 border-b border-gray-200 pb-2 mb-4">
+                    Cargo: {positionResult.cargo.nombre}
+                  </h2>
+                  <div className="grid grid-cols-2 gap-4">
+                    {winners.map((result, idx) => (
+                      <div key={result.candidato.id} className="flex items-center gap-4 p-3 bg-white border border-gray-100 rounded-lg shadow-sm">
+                        {result.candidato.foto ? (
+                          <img src={obtenerUrlDirectaDrive(result.candidato.foto)} alt={result.candidato.nombre} className="w-12 h-12 rounded-full object-cover border border-gray-200 shadow-sm" />
+                        ) : (
+                          <div className="w-12 h-12 rounded-full bg-gray-200 border border-gray-200 flex items-center justify-center text-gray-400 font-bold text-sm">
+                            {result.candidato.nombre.charAt(0)}
+                          </div>
+                        )}
+                        <div>
+                          <h3 className="font-bold text-gray-800 text-sm leading-snug">{result.candidato.nombre}</h3>
+                          <p className="text-xs text-blue-600 font-bold mt-0.5">
+                            {isVocal ? `Vocal Electo #${idx + 1}` : 'Candidato Electo'}
+                          </p>
+                          <p className="text-[10px] text-gray-400 font-medium mt-0.5">
+                            Plancha: {result.candidato.plancha?.nombre} • Votos: {result.total_votos} ({result.porcentaje.toFixed(1)}%)
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Signatures block at the bottom of complete report */}
+          <div className="grid grid-cols-2 gap-12 mt-20 pt-10 border-t border-gray-200">
+            <div className="text-center">
+              <div className="w-48 border-b border-gray-400 mx-auto mb-2"></div>
+              <p className="text-xs font-extrabold text-gray-800">Presidente de la Comisión Electoral</p>
+              <p className="text-[10px] text-gray-400">Firma y Sello</p>
+            </div>
+            <div className="text-center">
+              <div className="w-48 border-b border-gray-400 mx-auto mb-2"></div>
+              <p className="text-xs font-extrabold text-gray-800">Secretario de la Mesa Electoral</p>
+              <p className="text-[10px] text-gray-400">Firma y Sello</p>
+            </div>
+          </div>
+
+          {/* Anexo de Gráficos de Resultados (visible solo en impresión, forzando salto de página) */}
+          <div style={{ pageBreakBefore: 'always' }} className="pt-8 mt-8">
+            <div className="flex items-center justify-between border-b-2 border-gray-300 pb-4 mb-6">
+              <div className="flex items-center gap-4">
+                <img src="/company_logo.png" alt="Logo" className="w-16 h-16 rounded-xl object-cover border border-gray-300 shadow-sm" />
+                <div>
+                  <h1 className="text-2xl font-bold uppercase tracking-tight text-gray-900">Anexo Estadístico: Gráficos de Votación</h1>
+                  <p className="text-sm text-gray-500 font-medium">Distribución y porcentaje de votos por cada cargo electivo</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="space-y-8">
+              {results.map((positionResult) => {
+                const isVocal = positionResult.cargo.nombre.toLowerCase().includes('vocal');
+                const printChartData = positionResult.resultados.map(res => {
+                  const planchaColor = res.candidato.plancha?.color || '#3B82F6';
+                  return {
+                    name: isVocal ? (res.candidato.plancha?.nombre || '') : res.candidato.nombre,
+                    total_votos: res.total_votos,
+                    porcentaje: res.porcentaje,
+                    color: planchaColor,
+                  };
+                });
+
+                return (
+                  <div key={positionResult.cargo.id} className="grid grid-cols-2 gap-6 items-center border border-gray-250 rounded-xl p-5 bg-gray-50/50" style={{ pageBreakInside: 'avoid' }}>
+                    <div>
+                      <h3 className="text-sm font-extrabold text-gray-900 mb-2">Cargo: {positionResult.cargo.nombre}</h3>
+                      <div className="space-y-2">
+                        {printChartData.map((data, idx) => (
+                          <div key={idx} className="flex justify-between items-center text-xs pb-1 border-b border-gray-200 last:border-0">
+                            <div className="flex items-center gap-2">
+                              <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: data.color }} />
+                              <span className="font-bold text-gray-800">{data.name}</span>
+                            </div>
+                            <span className="font-mono text-gray-600 font-bold">{data.total_votos} votos ({data.porcentaje.toFixed(1)}%)</span>
+                          </div>
+                        ))}
+                      </div>
                     </div>
 
-                    {/* Gráfico Circular para Impresión */}
                     <div className="bg-white p-3 border border-gray-200 rounded-lg shadow-sm">
                       <p className="text-[10px] font-bold text-gray-400 text-center uppercase tracking-wider mb-3">Porcentaje de Votación</p>
                       <PieChart width={320} height={180}>
@@ -587,12 +592,121 @@ export const AdminResults: React.FC = () => {
                       </PieChart>
                     </div>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
         </div>
-      </div>
+      )}
+
+      {/* Acta de Impresión de Plancha Ganadora (visible solo en impresión cuando printMode === 'winner') */}
+      {printMode === 'winner' && (() => {
+        // Find the winning plancha (the one with the most votes)
+        let winnerPlancha = planchas[0];
+        let maxVotes = getPlanchaTotalVotes(planchas[0]?.id);
+        
+        planchas.forEach(p => {
+          const votes = getPlanchaTotalVotes(p.id);
+          if (votes > maxVotes) {
+            maxVotes = votes;
+            winnerPlancha = p;
+          }
+        });
+
+        if (!winnerPlancha) return null;
+
+        return (
+          <div className="hidden print:block bg-white text-black p-10 min-h-screen">
+            <div className="flex items-center justify-between border-b-2 border-gray-300 pb-5 mb-8">
+              <div className="flex items-center gap-4">
+                <img src="/company_logo.png" alt="Logo" className="w-18 h-18 rounded-xl object-cover border border-gray-300 shadow-sm" />
+                <div>
+                  <h1 className="text-2xl font-black uppercase tracking-tight text-gray-900">PROCLAMACIÓN OFICIAL DE PLANCHA GANADORA</h1>
+                  <p className="text-sm text-gray-500 font-bold uppercase tracking-wider">Acta Oficial de Adjudicación de Directiva</p>
+                </div>
+              </div>
+              <div className="text-right">
+                <p className="text-xs text-gray-400 font-semibold">Emisión: {new Date().toLocaleDateString()}</p>
+              </div>
+            </div>
+
+            <div className="p-6 bg-amber-50 border-2 border-amber-500/30 rounded-2xl mb-8 text-center animate-fadeIn">
+              <span className="text-[10px] font-extrabold uppercase tracking-widest text-amber-600 block mb-1">PLANCHA ELECTA GANADORA</span>
+              <h2 className="text-4xl font-black text-gray-950 uppercase tracking-tight">{winnerPlancha.nombre}</h2>
+              {winnerPlancha.eslogan && <p className="text-sm text-gray-600 italic mt-1">"{winnerPlancha.eslogan}"</p>}
+              <div className="inline-flex items-center gap-2 mt-4 px-4 py-1.5 bg-amber-500/10 border border-amber-500/20 rounded-full text-sm font-bold text-amber-800">
+                Votos Acumulados: {maxVotes}
+              </div>
+            </div>
+
+            <p className="text-xs text-gray-500 mb-6 font-medium leading-relaxed">
+              La Comisión Electoral de la institución certifica que, habiendo concluido el escrutinio de los votos emitidos en la jornada electoral, la plancha arriba indicada ha obtenido la mayoría de los votos, acreditándola como la ganadora legítima del proceso electoral. A continuación se detallan los integrantes del gabinete propuesto de la plancha ganadora que asumirán los respectivos cargos directivos:
+            </p>
+
+            <table className="w-full border-collapse border border-gray-300 text-xs mb-10">
+              <thead>
+                <tr className="bg-gray-100 text-gray-700">
+                  <th className="border border-gray-300 p-3 text-left font-extrabold">Cargo</th>
+                  <th className="border border-gray-300 p-3 text-left font-extrabold">Candidato(a) Electo(a)</th>
+                  <th className="border border-gray-300 p-3 text-left font-extrabold">Sigla / Plancha</th>
+                  <th className="border border-gray-300 p-3 text-center font-extrabold w-24">Votos Obtenidos</th>
+                  <th className="border border-gray-300 p-3 text-center font-extrabold w-24">Porcentaje (%)</th>
+                </tr>
+              </thead>
+              <tbody>
+                {results.map((positionResult) => {
+                  const isVocal = positionResult.cargo.nombre.toLowerCase().includes('vocal');
+                  const maxWinners = isVocal ? 4 : 1;
+                  const winnerCandidates = positionResult.resultados
+                    .filter(r => r.candidato.plancha_id === winnerPlancha.id)
+                    .filter((_, idx) => idx < maxWinners && _.total_votos > 0);
+
+                  if (winnerCandidates.length === 0) return null;
+
+                  return winnerCandidates.map((candResult, index) => (
+                    <tr key={candResult.candidato.id} className="hover:bg-gray-50/50">
+                      <td className="border border-gray-300 p-3 font-bold text-gray-800">
+                        {positionResult.cargo.nombre} {isVocal ? `#${index + 1}` : ''}
+                      </td>
+                      <td className="border border-gray-300 p-3 font-bold text-gray-900 flex items-center gap-3">
+                        {candResult.candidato.foto ? (
+                          <img 
+                            src={obtenerUrlDirectaDrive(candResult.candidato.foto)} 
+                            alt={candResult.candidato.nombre} 
+                            className="w-8 h-8 rounded-full object-cover border border-gray-200 shadow-sm shrink-0" 
+                          />
+                        ) : (
+                          <div className="w-8 h-8 rounded-full bg-gray-100 border border-gray-200 flex items-center justify-center text-gray-400 font-extrabold text-[10px] shrink-0">
+                            {candResult.candidato.nombre.charAt(0)}
+                          </div>
+                        )}
+                        <span>{candResult.candidato.nombre}</span>
+                      </td>
+                      <td className="border border-gray-300 p-3 text-gray-600 font-medium">{winnerPlancha.nombre}</td>
+                      <td className="border border-gray-300 p-3 text-center font-mono text-gray-900 font-bold">{candResult.total_votos}</td>
+                      <td className="border border-gray-300 p-3 text-center font-mono text-gray-900 font-bold">{candResult.porcentaje.toFixed(1)}%</td>
+                    </tr>
+                  ));
+                })}
+              </tbody>
+            </table>
+
+            {/* Signatures block at the bottom */}
+            <div className="grid grid-cols-2 gap-12 mt-24 pt-10 border-t border-gray-200">
+              <div className="text-center">
+                <div className="w-48 border-b border-gray-400 mx-auto mb-2"></div>
+                <p className="text-xs font-extrabold text-gray-800">Presidente de la Comisión Electoral</p>
+                <p className="text-[10px] text-gray-400">Firma y Sello</p>
+              </div>
+              <div className="text-center">
+                <div className="w-48 border-b border-gray-400 mx-auto mb-2"></div>
+                <p className="text-xs font-extrabold text-gray-800">Secretario de la Mesa Electoral</p>
+                <p className="text-[10px] text-gray-400">Firma y Sello</p>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
     </div>
   );
 };
