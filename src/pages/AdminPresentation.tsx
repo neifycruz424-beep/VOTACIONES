@@ -23,9 +23,11 @@ import {
   Award,
   Lock,
   Layers,
-  Sparkles
+  Sparkles,
+  PieChart as PieIcon,
+  BarChart4
 } from 'lucide-react';
-import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Cell } from 'recharts';
+import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Cell, PieChart, Pie } from 'recharts';
 
 export const AdminPresentation: React.FC = () => {
   const navigate = useNavigate();
@@ -163,7 +165,8 @@ export const AdminPresentation: React.FC = () => {
     }
   };
 
-  const slidesCount = 7;
+  // Slides count changed to 9
+  const slidesCount = 9;
 
   const nextSlide = () => {
     if (currentSlide < slidesCount - 1) {
@@ -187,6 +190,26 @@ export const AdminPresentation: React.FC = () => {
   }
 
   const participacionPct = totalVotantes > 0 ? (totalVotos / totalVotantes) * 100 : 0;
+  const abstencionPct = 100 - participacionPct;
+  const totalAbstencion = Math.max(0, totalVotantes - totalVotos);
+
+  // Turnout chart data
+  const turnoutData = [
+    { name: 'Votaron', value: totalVotos, color: '#10B981' },
+    { name: 'Abstención', value: totalAbstencion, color: '#EF4444' }
+  ];
+
+  // Vocales chart data
+  const vocalesResult = results.find(r => r.cargo.nombre.toLowerCase().includes('vocal'));
+  const vocalesChartData = vocalesResult?.resultados.map(res => {
+    const planchaColor = res.candidato.plancha?.color || '#3B82F6';
+    return {
+      name: res.candidato.plancha?.nombre || 'Independiente',
+      votos: res.total_votos,
+      porcentaje: res.porcentaje,
+      color: planchaColor,
+    };
+  }) || [];
 
   return (
     <div className="min-h-screen bg-slate-950 bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950 text-white relative overflow-hidden flex flex-col justify-between select-none">
@@ -335,11 +358,88 @@ export const AdminPresentation: React.FC = () => {
           </div>
         )}
 
-        {/* SLIDE 2: LAS PLANCHAS ELECTORALES */}
+        {/* SLIDE 2: ANALISIS DE PARTICIPACION (NEW CHART SLIDE) */}
         {currentSlide === 2 && (
-          <div className="w-full space-y-8 animate-fadeIn">
+          <div className="w-full space-y-6 animate-fadeIn">
             <div className="text-center md:text-left space-y-1.5">
               <span className="text-xs text-blue-400 font-extrabold uppercase tracking-widest">Diapositiva 03</span>
+              <h2 className="text-3xl md:text-4xl font-black uppercase tracking-tight">Análisis Gráfico de Participación vs Abstención</h2>
+              <p className="text-slate-400 text-sm">Distribución porcentual de asistencia a las urnas y abstencionismo electoral</p>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-center">
+              
+              {/* Turnout metrics box */}
+              <div className="p-6 bg-slate-900/60 border border-white/10 rounded-3xl space-y-4">
+                <h3 className="text-xs font-bold tracking-widest text-slate-400 uppercase flex items-center gap-2">
+                  <PieIcon className="w-4 h-4 text-emerald-400" />
+                  Métricas de Afluencia
+                </h3>
+                
+                <div className="space-y-4">
+                  <div className="pb-3 border-b border-white/5">
+                    <div className="flex justify-between text-xs text-slate-400 font-bold">
+                      <span>Votos Emitidos</span>
+                      <span className="text-emerald-400 font-extrabold">{participacionPct.toFixed(1)}%</span>
+                    </div>
+                    <p className="text-2xl font-black text-white mt-1">{totalVotos} Electores</p>
+                    <p className="text-[10px] text-slate-500 mt-0.5">Ejercieron activamente su derecho al voto.</p>
+                  </div>
+
+                  <div className="pb-1">
+                    <div className="flex justify-between text-xs text-slate-400 font-bold">
+                      <span>Abstención / Ausencia</span>
+                      <span className="text-red-400 font-extrabold">{abstencionPct.toFixed(1)}%</span>
+                    </div>
+                    <p className="text-2xl font-black text-white mt-1">{totalAbstencion} Electores</p>
+                    <p className="text-[10px] text-slate-500 mt-0.5">Electores ausentes en la jornada.</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Turnout Pie Chart */}
+              <div className="lg:col-span-2 p-6 bg-slate-900/60 border border-white/10 rounded-3xl h-[280px] flex items-center justify-center shadow-2xl relative">
+                <div className="absolute top-4 left-6 flex items-center gap-4 text-xs text-slate-300 font-bold">
+                  <div className="flex items-center gap-1.5">
+                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+                    <span>Votaron ({participacionPct.toFixed(1)}%)</span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <span className="w-2.5 h-2.5 rounded-full bg-red-500"></span>
+                    <span>Abstención ({abstencionPct.toFixed(1)}%)</span>
+                  </div>
+                </div>
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={turnoutData}
+                      cx="50%"
+                      cy="50%"
+                      labelLine={true}
+                      label={({ name, percent }: any) => `${name}: ${((percent || 0) * 100).toFixed(1)}%`}
+                      outerRadius={80}
+                      dataKey="value"
+                      stroke="rgba(15, 23, 42, 0.6)"
+                      strokeWidth={2}
+                    >
+                      {turnoutData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.color} />
+                      ))}
+                    </Pie>
+                    <Tooltip contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', color: '#fff', borderRadius: '12px' }} />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+
+            </div>
+          </div>
+        )}
+
+        {/* SLIDE 3: LAS PLANCHAS ELECTORALES */}
+        {currentSlide === 3 && (
+          <div className="w-full space-y-8 animate-fadeIn">
+            <div className="text-center md:text-left space-y-1.5">
+              <span className="text-xs text-blue-400 font-extrabold uppercase tracking-widest">Diapositiva 04</span>
               <h2 className="text-3xl md:text-4xl font-black uppercase tracking-tight">Planchas Electorales Nominadas</h2>
               <p className="text-slate-400 text-sm">Organizaciones políticas que se postularon para conformar la directiva</p>
             </div>
@@ -394,11 +494,11 @@ export const AdminPresentation: React.FC = () => {
           </div>
         )}
 
-        {/* SLIDE 3: SEGURIDAD Y ANTIFRAUDE */}
-        {currentSlide === 3 && (
+        {/* SLIDE 4: SEGURIDAD Y ANTIFRAUDE */}
+        {currentSlide === 4 && (
           <div className="w-full space-y-8 animate-fadeIn">
             <div className="text-center md:text-left space-y-1.5">
-              <span className="text-xs text-blue-400 font-extrabold uppercase tracking-widest">Diapositiva 04</span>
+              <span className="text-xs text-blue-400 font-extrabold uppercase tracking-widest">Diapositiva 05</span>
               <h2 className="text-3xl md:text-4xl font-black uppercase tracking-tight">Garantía de Transparencia y Antifraude</h2>
               <p className="text-slate-400 text-sm">Medidas de seguridad criptográfica y auditoría en tiempo real</p>
             </div>
@@ -451,12 +551,12 @@ export const AdminPresentation: React.FC = () => {
           </div>
         )}
 
-        {/* SLIDE 4: GRAFICO DE RESULTADOS GENERALES */}
-        {currentSlide === 4 && (
+        {/* SLIDE 5: GRAFICO DE RESULTADOS GENERALES (SUPREMACIA) */}
+        {currentSlide === 5 && (
           <div className="w-full space-y-6 animate-fadeIn">
             <div className="text-center md:text-left space-y-1.5">
-              <span className="text-xs text-blue-400 font-extrabold uppercase tracking-widest">Diapositiva 05</span>
-              <h2 className="text-3xl md:text-4xl font-black uppercase tracking-tight">Distribución de Resultados Electorales</h2>
+              <span className="text-xs text-blue-400 font-extrabold uppercase tracking-widest">Diapositiva 06</span>
+              <h2 className="text-3xl md:text-4xl font-black uppercase tracking-tight">Distribución de Resultados Electorales (Supremacía)</h2>
               <p className="text-slate-400 text-sm">Gráfico comparativo del caudal electoral de las planchas directivas</p>
             </div>
 
@@ -513,11 +613,109 @@ export const AdminPresentation: React.FC = () => {
           </div>
         )}
 
-        {/* SLIDE 5: ADJUDICACION DE DIRECTIVA GANADORA */}
-        {currentSlide === 5 && (
+        {/* SLIDE 6: RESULTADOS DETALLADOS - VOCALES (NEW CHART SLIDE) */}
+        {currentSlide === 6 && (
           <div className="w-full space-y-6 animate-fadeIn">
             <div className="text-center md:text-left space-y-1.5">
-              <span className="text-xs text-blue-400 font-extrabold uppercase tracking-widest">Diapositiva 06</span>
+              <span className="text-xs text-blue-400 font-extrabold uppercase tracking-widest">Diapositiva 07</span>
+              <h2 className="text-3xl md:text-4xl font-black uppercase tracking-tight">Escrutinio Específico: Vocales de la Directiva</h2>
+              <p className="text-slate-400 text-sm">Distribución y porcentaje de votos para la representación de Vocales</p>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-center">
+              
+              {/* Vocales metrics list */}
+              <div className="p-6 bg-slate-900/60 border border-white/10 rounded-3xl space-y-4">
+                <h3 className="text-xs font-bold tracking-widest text-slate-400 uppercase flex items-center gap-2">
+                  <BarChart4 className="w-4 h-4 text-indigo-400" />
+                  Votos de Vocales
+                </h3>
+                
+                <div className="space-y-3">
+                  {vocalesChartData.length === 0 ? (
+                    <p className="text-xs text-slate-500 italic">No hay registros de vocales en esta elección.</p>
+                  ) : (
+                    vocalesChartData.map((data, idx) => (
+                      <div key={idx} className="pb-2 border-b border-white/5 last:border-0 text-xs font-bold">
+                        <div className="flex justify-between items-center text-slate-200">
+                          <div className="flex items-center gap-2">
+                            <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: data.color }} />
+                            <span>{data.name}</span>
+                          </div>
+                          <span className="font-mono text-slate-300">{data.votos} votos</span>
+                        </div>
+                        <div className="flex justify-between text-[10px] text-slate-500 mt-1 font-semibold">
+                          <span>Porcentaje</span>
+                          <span style={{ color: data.color }}>{data.porcentaje.toFixed(1)}%</span>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+
+              {/* Vocales Pie Chart */}
+              <div className="lg:col-span-2 p-6 bg-slate-900/60 border border-white/10 rounded-3xl h-[280px] flex items-center justify-center shadow-2xl relative">
+                {vocalesChartData.length === 0 ? (
+                  <p className="text-slate-400 font-bold">Sin datos para graficar</p>
+                ) : (
+                  <>
+                    <div className="absolute top-4 left-6 flex flex-wrap items-center gap-4 text-[10px] text-slate-300 font-bold max-w-[80%]">
+                      {vocalesChartData.map((entry, idx) => (
+                        <div key={idx} className="flex items-center gap-1.5">
+                          <span className="w-2 h-2 rounded-full" style={{ backgroundColor: entry.color }}></span>
+                          <span>{entry.name} ({entry.porcentaje.toFixed(1)}%)</span>
+                        </div>
+                      ))}
+                    </div>
+                    <ResponsiveContainer width="100%" height="100%">
+                      <PieChart>
+                        <Pie
+                          data={vocalesChartData}
+                          cx="50%"
+                          cy="50%"
+                          labelLine={true}
+                          label={({ x, y, textAnchor, name, payload }: any) => {
+                            const displayName = name || payload?.name || payload?.payload?.name || '';
+                            const displayPercent = payload?.porcentaje ?? payload?.payload?.porcentaje ?? 0;
+                            return (
+                              <text 
+                                x={x} 
+                                y={y} 
+                                fill="#fff" 
+                                textAnchor={textAnchor} 
+                                dominantBaseline="central"
+                                style={{ fontSize: '10px', fontWeight: '500' }}
+                              >
+                                {displayName}: {displayPercent.toFixed(1)}%
+                              </text>
+                            );
+                          }}
+                          outerRadius={75}
+                          dataKey="votos"
+                          stroke="rgba(15, 23, 42, 0.6)"
+                          strokeWidth={2}
+                        >
+                          {vocalesChartData.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={entry.color} />
+                          ))}
+                        </Pie>
+                        <Tooltip contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', color: '#fff', borderRadius: '12px' }} />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </>
+                )}
+              </div>
+
+            </div>
+          </div>
+        )}
+
+        {/* SLIDE 7: ADJUDICACION DE DIRECTIVA GANADORA */}
+        {currentSlide === 7 && (
+          <div className="w-full space-y-6 animate-fadeIn">
+            <div className="text-center md:text-left space-y-1.5">
+              <span className="text-xs text-blue-400 font-extrabold uppercase tracking-widest">Diapositiva 08</span>
               <h2 className="text-3xl md:text-4xl font-black uppercase tracking-tight">Directiva Electa Proclamada</h2>
               <p className="text-slate-400 text-sm">Gabinete de candidatos ganadores que asumirá los cargos institucionales</p>
             </div>
@@ -534,7 +732,7 @@ export const AdminPresentation: React.FC = () => {
                 </div>
 
                 {/* Cabinet grid */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 overflow-y-auto max-h-[300px] pr-1">
                   {results.map((pos) => {
                     const isVocal = pos.cargo.nombre.toLowerCase().includes('vocal');
                     const maxWinners = isVocal ? 4 : 1;
@@ -547,7 +745,7 @@ export const AdminPresentation: React.FC = () => {
                     return winnerCands.map((c, index) => (
                       <div 
                         key={c.candidato.id} 
-                        className="p-4 bg-slate-900/60 border border-white/10 rounded-2xl text-center space-y-3 flex flex-col justify-between items-center shadow-lg hover:border-yellow-500/20 transition-all"
+                        className="p-4 bg-slate-900/60 border border-white/10 rounded-2xl text-center space-y-3 flex flex-col justify-between items-center shadow-lg hover:border-yellow-500/20 transition-all animate-fadeIn"
                       >
                         {c.candidato.foto ? (
                           <img 
@@ -581,8 +779,8 @@ export const AdminPresentation: React.FC = () => {
           </div>
         )}
 
-        {/* SLIDE 6: CIERRE / PREGUNTAS */}
-        {currentSlide === 6 && (
+        {/* SLIDE 8: CIERRE / PREGUNTAS */}
+        {currentSlide === 8 && (
           <div className="text-center space-y-6 max-w-2xl animate-fadeIn">
             <div className="flex justify-center">
               <div className="w-20 h-20 bg-gradient-to-tr from-yellow-500 to-amber-500 rounded-full flex items-center justify-center shadow-2xl shadow-yellow-500/10">
