@@ -501,16 +501,11 @@ export const AdminResults: React.FC = () => {
             })}
           </div>
 
-          {/* Signatures block at the bottom of complete report */}
-          <div className="grid grid-cols-2 gap-12 mt-20 pt-10 border-t border-gray-200">
-            <div className="text-center">
-              <div className="w-48 border-b border-gray-400 mx-auto mb-2"></div>
-              <p className="text-xs font-extrabold text-gray-800">Presidente de la Comisión Electoral</p>
-              <p className="text-[10px] text-gray-400">Firma y Sello</p>
-            </div>
-            <div className="text-center">
-              <div className="w-48 border-b border-gray-400 mx-auto mb-2"></div>
-              <p className="text-xs font-extrabold text-gray-800">Secretario de la Mesa Electoral</p>
+          {/* Signature block at the bottom of complete report */}
+          <div className="mt-20 pt-10 border-t border-gray-200 flex flex-col items-center">
+            <div className="text-center w-64">
+              <div className="border-b border-gray-400 mb-2"></div>
+              <p className="text-xs font-extrabold text-gray-800">Responsable de Elecciones</p>
               <p className="text-[10px] text-gray-400">Firma y Sello</p>
             </div>
           </div>
@@ -691,16 +686,11 @@ export const AdminResults: React.FC = () => {
               </tbody>
             </table>
 
-            {/* Signatures block at the bottom */}
-            <div className="grid grid-cols-2 gap-12 mt-24 pt-10 border-t border-gray-200">
-              <div className="text-center">
-                <div className="w-48 border-b border-gray-400 mx-auto mb-2"></div>
-                <p className="text-xs font-extrabold text-gray-800">Presidente de la Comisión Electoral</p>
-                <p className="text-[10px] text-gray-400">Firma y Sello</p>
-              </div>
-              <div className="text-center">
-                <div className="w-48 border-b border-gray-400 mx-auto mb-2"></div>
-                <p className="text-xs font-extrabold text-gray-800">Secretario de la Mesa Electoral</p>
+            {/* Signature block at the bottom of winner report */}
+            <div className="mt-20 pt-10 border-t border-gray-200 flex flex-col items-center">
+              <div className="text-center w-64">
+                <div className="border-b border-gray-400 mb-2"></div>
+                <p className="text-xs font-extrabold text-gray-800">Responsable de Elecciones</p>
                 <p className="text-[10px] text-gray-400">Firma y Sello</p>
               </div>
             </div>
