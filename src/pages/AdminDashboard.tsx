@@ -6,7 +6,7 @@ import { LoadingSpinner } from '../components/ui/LoadingSpinner';
 import { votoService } from '../services/votoService';
 import { supabase } from '../lib/supabase';
 import type { DashboardStats } from '../types';
-import { Users, Vote, TrendingUp, Power, Settings, BarChart3, UserPlus, Users2, LogOut, RefreshCw, ShieldAlert } from 'lucide-react';
+import { Users, Vote, TrendingUp, Power, Settings, BarChart3, UserPlus, Users2, LogOut, RefreshCw, ShieldAlert, Presentation } from 'lucide-react';
 
 export const AdminDashboard: React.FC = () => {
   const navigate = useNavigate();
@@ -341,6 +341,27 @@ export const AdminDashboard: React.FC = () => {
                 <div>
                   <h3 className="font-bold text-red-200 text-lg">Reiniciar Elección</h3>
                   <p className="text-sm text-red-300/80">Borrar todos los votos actuales</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Modo Presentación Slide Deck */}
+          <Card 
+            className="bg-white/95 backdrop-blur-xl border border-amber-200 shadow-2xl cursor-pointer hover:scale-105 transition-all duration-300 hover:shadow-amber-500/10" 
+            onClick={() => navigate('/admin/presentacion')}
+          >
+            <CardContent className="p-6">
+              <div className="flex items-center space-x-4">
+                <div className="w-14 h-14 bg-gradient-to-br from-amber-500 to-yellow-500 rounded-xl flex items-center justify-center shadow-lg">
+                  <Presentation className="w-7 h-7 text-white" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-gray-900 text-lg flex items-center gap-1.5">
+                    Modo Presentación
+                    <span className="bg-amber-100 text-amber-800 text-[9px] font-extrabold px-1.5 py-0.5 rounded-full uppercase tracking-wider">Nuevo</span>
+                  </h3>
+                  <p className="text-sm text-gray-600">Diapositivas para exposición</p>
                 </div>
               </div>
             </CardContent>

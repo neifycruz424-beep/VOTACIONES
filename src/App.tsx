@@ -11,6 +11,7 @@ import { AdminPlanchas } from './pages/AdminPlanchas';
 import { AdminVotantes } from './pages/AdminVotantes';
 import { AdminResults } from './pages/AdminResults';
 import { AdminAuditoria } from './pages/AdminAuditoria';
+import { AdminPresentation } from './pages/AdminPresentation';
 
 export function App() {
   return (
@@ -31,6 +32,7 @@ export function App() {
         <Route path="/admin/votantes" element={<AdminVotantes />} />
         <Route path="/admin/resultados" element={<AdminResults />} />
         <Route path="/admin/auditoria" element={<AdminAuditoria />} />
+        <Route path="/admin/presentacion" element={<AdminPresentation />} />
         
         {/* Catch all - redirect to home */}
         <Route path="*" element={<Navigate to="/" replace />} />
