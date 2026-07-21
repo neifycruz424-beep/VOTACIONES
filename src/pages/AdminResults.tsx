@@ -48,135 +48,140 @@ export const AdminResults: React.FC = () => {
 
     // Theme classes based on print/screen mode
     const cardBg = isPrintMode 
-      ? 'bg-white border border-gray-300 text-black' 
+      ? 'bg-white border border-gray-300 text-black shadow-none' 
       : 'bg-slate-900/90 backdrop-blur-md border border-white/10 text-white';
     const lineBg = isPrintMode ? 'bg-gray-400' : 'bg-slate-700/60';
     const subText = isPrintMode ? 'text-gray-500' : 'text-slate-400';
 
     return (
-      <div className={`flex flex-col items-center justify-center p-6 rounded-3xl ${isPrintMode ? 'bg-white' : 'bg-slate-950/40 border border-white/5 shadow-inner'} w-full overflow-x-auto`}>
+      <div className={`flex flex-col items-center justify-center p-6 rounded-3xl ${
+        isPrintMode ? 'bg-white' : 'bg-slate-950/40 border border-white/5 shadow-inner'
+      } w-full overflow-x-auto print:p-0 print:border-0`}>
         <div className="min-w-[620px] flex flex-col items-center">
           
           {/* Header Title */}
-          <div className="mb-6 pb-2.5 border-b border-gray-300/30 text-center w-full max-w-md">
-            <span className={`text-[9px] font-extrabold uppercase tracking-widest ${isPrintMode ? 'text-amber-700' : 'text-amber-500'}`}>Organigrama Oficial de Directiva</span>
+          <div className="mb-6 pb-2 border-b border-gray-300/20 text-center w-full max-w-md">
+            <span className={`text-[9px] font-extrabold uppercase tracking-widest ${isPrintMode ? 'text-amber-700 font-bold' : 'text-amber-500'}`}>Organigrama Oficial de Directiva</span>
             <h3 className={`text-lg font-black uppercase tracking-tight mt-0.5 ${isPrintMode ? 'text-gray-900' : 'text-white'}`}>{plancha.nombre}</h3>
           </div>
 
-          <div className="flex items-center justify-center gap-0 relative">
+          {/* HIERARCHICAL TREE CONTAINER */}
+          <div className="flex flex-col items-center w-full">
             
-            {/* 1. LEFT COLUMN: VOCALES */}
-            <div className="flex flex-col gap-4 items-end justify-center py-2 pr-1">
-              {vocales.map((v, index) => (
-                <div key={v.candidato.id} className="flex items-center gap-0">
-                  {/* Card */}
-                  <div className={`w-44 p-2 rounded-xl flex items-center gap-2.5 shadow-sm ${cardBg}`}>
-                    {v.candidato.foto ? (
-                      <img 
-                        src={obtenerUrlDirectaDrive(v.candidato.foto)} 
-                        alt={v.candidato.nombre} 
-                        className="w-8 h-8 rounded-full object-cover border border-slate-500/20 shadow-sm shrink-0" 
-                      />
-                    ) : (
-                      <div className="w-8 h-8 rounded-full bg-slate-800 border border-slate-500/20 flex items-center justify-center text-slate-400 font-black text-xs shrink-0">
-                        {v.candidato.nombre.charAt(0)}
-                      </div>
-                    )}
-                    <div className="min-w-0">
-                      <span className="text-[7px] font-extrabold text-blue-500 uppercase tracking-wider block">Vocal #{index + 1}</span>
-                      <h4 className="font-bold text-[11px] truncate max-w-[100px] leading-tight">{v.candidato.nombre}</h4>
-                      <p className={`text-[8px] ${subText} leading-none mt-0.5`}>{v.total_votos} votos ({v.porcentaje.toFixed(1)}%)</p>
+            {/* 1. PRESIDENTE */}
+            {pres && (
+              <div className="flex flex-col items-center">
+                <div className={`w-48 p-2.5 rounded-xl text-center flex flex-col items-center shadow-sm border ${
+                  isPrintMode ? 'border-amber-500 bg-white text-black' : 'border-amber-500/30 bg-slate-900/90 text-white'
+                }`}>
+                  {pres.candidato.foto ? (
+                    <img 
+                      src={obtenerUrlDirectaDrive(pres.candidato.foto)} 
+                      alt={pres.candidato.nombre} 
+                      className="w-10 h-10 rounded-full object-cover border-2 border-amber-500 shadow-sm mb-1 shrink-0" 
+                    />
+                  ) : (
+                    <div className="w-10 h-10 rounded-full bg-slate-800 border-2 border-amber-500 flex items-center justify-center text-amber-400 font-black text-sm mb-1 shrink-0">
+                      {pres.candidato.nombre.charAt(0)}
                     </div>
-                  </div>
-                  {/* Horizontal Connector to vertical bar */}
-                  <div className={`w-5 h-0.5 ${lineBg}`}></div>
+                  )}
+                  <span className="text-[8px] font-extrabold text-amber-500 uppercase tracking-widest leading-none">Presidente</span>
+                  <h4 className="font-extrabold text-[11px] mt-0.5 max-w-[150px] truncate leading-tight">{pres.candidato.nombre}</h4>
+                  <p className={`text-[8px] ${subText} leading-none mt-0.5`}>{pres.votos} votos ({pres.porcentaje.toFixed(1)}%)</p>
                 </div>
-              ))}
-            </div>
+                {/* Vertical line downward */}
+                <div className={`w-0.5 h-5 ${lineBg}`}></div>
+              </div>
+            )}
 
-            {/* 2. MIDDLE CONNECTOR BAR */}
-            <div className="relative self-stretch flex items-center justify-center w-px">
-              {/* Vertical line connecting all horizontal vocal stems */}
-              <div className={`absolute top-[28px] bottom-[28px] w-0.5 ${lineBg}`}></div>
-              
-              {/* Horizontal cross-bar to the right column main line */}
-              <div className={`absolute left-0 w-8 h-0.5 ${lineBg}`}></div>
-            </div>
+            {/* 2. ASESOR */}
+            {asesor && (
+              <div className="flex flex-col items-center">
+                <div className={`w-44 p-2 rounded-xl text-center flex flex-col items-center shadow-sm ${cardBg}`}>
+                  {asesor.candidato.foto ? (
+                    <img 
+                      src={obtenerUrlDirectaDrive(asesor.candidato.foto)} 
+                      alt={asesor.candidato.nombre} 
+                      className="w-8 h-8 rounded-full object-cover border border-slate-500/20 shadow-sm mb-1 shrink-0" 
+                    />
+                  ) : (
+                    <div className="w-8 h-8 rounded-full bg-slate-800 border border-slate-500/20 flex items-center justify-center text-slate-400 font-black text-xs mb-1 shrink-0">
+                      {asesor.candidato.nombre.charAt(0)}
+                    </div>
+                  )}
+                  <span className="text-[8px] font-extrabold text-slate-500 uppercase tracking-widest leading-none">Asesor</span>
+                  <h4 className="font-bold text-[11px] mt-0.5 max-w-[130px] truncate leading-tight">{asesor.candidato.nombre}</h4>
+                  <p className={`text-[8px] ${subText} leading-none mt-0.5`}>{asesor.votos} votos ({asesor.porcentaje.toFixed(1)}%)</p>
+                </div>
+                {/* Vertical line downward */}
+                <div className={`w-0.5 h-5 ${lineBg}`}></div>
+              </div>
+            )}
 
-            {/* 3. RIGHT COLUMN: PRESIDENTE -> ASESOR -> SECRETARIA */}
-            <div className="flex flex-col items-center justify-center py-2 pl-8">
-              
-              {/* President Box */}
-              {pres && (
-                <div className="flex flex-col items-center">
-                  <div className={`w-48 p-2.5 rounded-xl text-center flex flex-col items-center shadow-sm border ${
-                    isPrintMode ? 'border-amber-500 bg-white text-black' : 'border-amber-500/30 bg-slate-900/90 text-white'
-                  }`}>
-                    {pres.candidato.foto ? (
-                      <img 
-                        src={obtenerUrlDirectaDrive(pres.candidato.foto)} 
-                        alt={pres.candidato.nombre} 
-                        className="w-10 h-10 rounded-full object-cover border-2 border-amber-500 shadow-sm mb-1 shrink-0" 
-                      />
-                    ) : (
-                      <div className="w-10 h-10 rounded-full bg-slate-800 border-2 border-amber-500 flex items-center justify-center text-amber-400 font-black text-sm mb-1 shrink-0">
-                        {pres.candidato.nombre.charAt(0)}
+            {/* 3. SECRETARIA */}
+            {sec && (
+              <div className="flex flex-col items-center w-full">
+                <div className={`w-44 p-2 rounded-xl text-center flex flex-col items-center shadow-sm ${cardBg}`}>
+                  {sec.candidato.foto ? (
+                    <img 
+                      src={obtenerUrlDirectaDrive(sec.candidato.foto)} 
+                      alt={sec.candidato.nombre} 
+                      className="w-8 h-8 rounded-full object-cover border border-slate-500/20 shadow-sm mb-1 shrink-0" 
+                    />
+                  ) : (
+                    <div className="w-8 h-8 rounded-full bg-slate-800 border border-slate-500/20 flex items-center justify-center text-slate-400 font-black text-xs mb-1 shrink-0">
+                      {sec.candidato.nombre.charAt(0)}
+                    </div>
+                  )}
+                  <span className="text-[8px] font-extrabold text-slate-500 uppercase tracking-widest leading-none">Secretaria</span>
+                  <h4 className="font-bold text-[11px] mt-0.5 max-w-[130px] truncate leading-tight">{sec.candidato.nombre}</h4>
+                  <p className={`text-[8px] ${subText} leading-none mt-0.5`}>{sec.votos} votos ({sec.porcentaje.toFixed(1)}%)</p>
+                </div>
+                {/* Vertical line downward from Secretaria */}
+                <div className={`w-0.5 h-5 ${lineBg}`}></div>
+              </div>
+            )}
+
+            {/* 4. VOCALES BRANCHES */}
+            {vocales.length > 0 && (
+              <div className="w-full flex flex-col items-center">
+                
+                {/* Horizontal T-bar split connector */}
+                <div className="relative w-full flex justify-center">
+                  {/* Horizontal bar spanning between first and last vocal stem */}
+                  <div className={`absolute top-0 h-0.5 ${lineBg}`} style={{ left: '12.5%', right: '12.5%' }}></div>
+                </div>
+
+                {/* 4 columns list */}
+                <div className="w-full grid grid-cols-4 gap-4 mt-0">
+                  {vocales.map((v, index) => (
+                    <div key={v.candidato.id} className="flex flex-col items-center">
+                      {/* Short vertical stem drops from horizontal bar to the card */}
+                      <div className={`w-0.5 h-5 ${lineBg}`}></div>
+                      
+                      {/* Vocal Card */}
+                      <div className={`w-full max-w-[135px] p-2 rounded-xl text-center flex flex-col items-center shadow-sm ${cardBg}`}>
+                        {v.candidato.foto ? (
+                          <img 
+                            src={obtenerUrlDirectaDrive(v.candidato.foto)} 
+                            alt={v.candidato.nombre} 
+                            className="w-8 h-8 rounded-full object-cover border border-slate-500/20 shadow-sm mb-1 shrink-0" 
+                          />
+                        ) : (
+                          <div className="w-8 h-8 rounded-full bg-slate-800 border border-slate-500/20 flex items-center justify-center text-slate-400 font-black text-xs mb-1 shrink-0">
+                            {v.candidato.nombre.charAt(0)}
+                          </div>
+                        )}
+                        <span className="text-[7px] font-extrabold text-blue-500 uppercase block leading-none">Vocal #{index + 1}</span>
+                        <h4 className="font-bold text-[10px] mt-0.5 max-w-[120px] truncate leading-tight">{v.candidato.nombre}</h4>
+                        <p className={`text-[8px] ${subText} leading-none mt-0.5`}>{v.total_votos} votos ({v.porcentaje.toFixed(1)}%)</p>
                       </div>
-                    )}
-                    <span className="text-[8px] font-extrabold text-amber-500 uppercase tracking-widest leading-none">Presidente</span>
-                    <h4 className="font-extrabold text-[11px] mt-0.5 max-w-[150px] truncate leading-tight">{pres.candidato.nombre}</h4>
-                    <p className={`text-[8px] ${subText} leading-none mt-0.5`}>{pres.votos} votos ({pres.porcentaje.toFixed(1)}%)</p>
-                  </div>
-                  <div className={`w-0.5 h-4 ${lineBg}`}></div>
+                    </div>
+                  ))}
                 </div>
-              )}
 
-              {/* Asesor Box */}
-              {asesor && (
-                <div className="flex flex-col items-center">
-                  <div className={`w-44 p-2 rounded-xl text-center flex flex-col items-center shadow-sm ${cardBg}`}>
-                    {asesor.candidato.foto ? (
-                      <img 
-                        src={obtenerUrlDirectaDrive(asesor.candidato.foto)} 
-                        alt={asesor.candidato.nombre} 
-                        className="w-8 h-8 rounded-full object-cover border border-slate-500/20 shadow-sm mb-1 shrink-0" 
-                      />
-                    ) : (
-                      <div className="w-8 h-8 rounded-full bg-slate-800 border border-slate-500/20 flex items-center justify-center text-slate-400 font-black text-xs mb-1 shrink-0">
-                        {asesor.candidato.nombre.charAt(0)}
-                      </div>
-                    )}
-                    <span className="text-[8px] font-extrabold text-slate-500 uppercase tracking-widest leading-none">Asesor</span>
-                    <h4 className="font-bold text-[11px] mt-0.5 max-w-[130px] truncate leading-tight">{asesor.candidato.nombre}</h4>
-                    <p className={`text-[8px] ${subText} leading-none mt-0.5`}>{asesor.votos} votos ({asesor.porcentaje.toFixed(1)}%)</p>
-                  </div>
-                  <div className={`w-0.5 h-4 ${lineBg}`}></div>
-                </div>
-              )}
-
-              {/* Secretaria Box */}
-              {sec && (
-                <div className="flex flex-col items-center">
-                  <div className={`w-44 p-2 rounded-xl text-center flex flex-col items-center shadow-sm ${cardBg}`}>
-                    {sec.candidato.foto ? (
-                      <img 
-                        src={obtenerUrlDirectaDrive(sec.candidato.foto)} 
-                        alt={sec.candidato.nombre} 
-                        className="w-8 h-8 rounded-full object-cover border border-slate-500/20 shadow-sm mb-1 shrink-0" 
-                      />
-                    ) : (
-                      <div className="w-8 h-8 rounded-full bg-slate-800 border border-slate-500/20 flex items-center justify-center text-slate-400 font-black text-xs mb-1 shrink-0">
-                        {sec.candidato.nombre.charAt(0)}
-                      </div>
-                    )}
-                    <span className="text-[8px] font-extrabold text-slate-500 uppercase tracking-widest leading-none">Secretaria</span>
-                    <h4 className="font-bold text-[11px] mt-0.5 max-w-[130px] truncate leading-tight">{sec.candidato.nombre}</h4>
-                    <p className={`text-[8px] ${subText} leading-none mt-0.5`}>{sec.votos} votos ({sec.porcentaje.toFixed(1)}%)</p>
-                  </div>
-                </div>
-              )}
-
-            </div>
+              </div>
+            )}
 
           </div>
         </div>
@@ -830,9 +835,11 @@ export const AdminResults: React.FC = () => {
               La Comisión Electoral de la institución certifica que, habiendo concluido el escrutinio de los votos emitidos en la jornada electoral, la plancha arriba indicada ha obtenido la mayoría de los votos, acreditándola como la ganadora legítima del proceso electoral. A continuación se detallan los integrantes del gabinete propuesto de la plancha ganadora que asumirán los respectivos cargos directivos:
             </p>
 
-            {/* Organigrama impreso de la plancha ganadora */}
-            <div className="mb-10 w-full flex justify-center">
-              {renderOrganigrama(winnerPlancha.id, true)}
+            {/* Organigrama impreso de la plancha ganadora en una página dedicada por sí misma */}
+            <div className="w-full flex flex-col items-center justify-center pt-8 pb-10" style={{ pageBreakAfter: 'always', breakAfter: 'page' }}>
+              <div className="w-full max-w-4xl border border-gray-300 p-8 rounded-3xl bg-white shadow-sm flex flex-col items-center justify-center">
+                {renderOrganigrama(winnerPlancha.id, true)}
+              </div>
             </div>
 
             <table className="w-full border-collapse border border-gray-300 text-xs mb-10">
