@@ -835,13 +835,6 @@ export const AdminResults: React.FC = () => {
               La Comisión Electoral de la institución certifica que, habiendo concluido el escrutinio de los votos emitidos en la jornada electoral, la plancha arriba indicada ha obtenido la mayoría de los votos, acreditándola como la ganadora legítima del proceso electoral. A continuación se detallan los integrantes del gabinete propuesto de la plancha ganadora que asumirán los respectivos cargos directivos:
             </p>
 
-            {/* Organigrama impreso de la plancha ganadora en una página dedicada por sí misma */}
-            <div className="w-full flex flex-col items-center justify-center pt-8 pb-10" style={{ pageBreakAfter: 'always', breakAfter: 'page' }}>
-              <div className="w-full max-w-4xl border border-gray-300 p-8 rounded-3xl bg-white shadow-sm flex flex-col items-center justify-center">
-                {renderOrganigrama(winnerPlancha.id, true)}
-              </div>
-            </div>
-
             <table className="w-full border-collapse border border-gray-300 text-xs mb-10">
               <thead>
                 <tr className="bg-gray-100 text-gray-700">
@@ -872,10 +865,10 @@ export const AdminResults: React.FC = () => {
                           <img 
                             src={obtenerUrlDirectaDrive(candResult.candidato.foto)} 
                             alt={candResult.candidato.nombre} 
-                            className="w-8 h-8 rounded-full object-cover border border-gray-200 shadow-sm shrink-0" 
+                            className="w-8 h-8 rounded-full object-cover border border-slate-500/20 shadow-sm shrink-0" 
                           />
                         ) : (
-                          <div className="w-8 h-8 rounded-full bg-gray-100 border border-gray-200 flex items-center justify-center text-gray-400 font-extrabold text-[10px] shrink-0">
+                          <div className="w-8 h-8 rounded-full bg-slate-800 border border-slate-500/20 flex items-center justify-center text-slate-400 font-black text-xs shrink-0">
                             {candResult.candidato.nombre.charAt(0)}
                           </div>
                         )}
@@ -896,6 +889,13 @@ export const AdminResults: React.FC = () => {
                 <div className="border-b border-gray-400 mb-2"></div>
                 <p className="text-xs font-extrabold text-gray-800">Responsable de Elecciones</p>
                 <p className="text-[10px] text-gray-400">Firma y Sello</p>
+              </div>
+            </div>
+
+            {/* Organigrama impreso de la plancha ganadora en una página dedicada por sí misma al final del documento */}
+            <div className="w-full flex flex-col items-center justify-center pt-24" style={{ pageBreakBefore: 'always', breakBefore: 'page' }}>
+              <div className="w-full max-w-4xl border border-gray-300 p-8 rounded-3xl bg-white shadow-sm flex flex-col items-center justify-center">
+                {renderOrganigrama(winnerPlancha.id, true)}
               </div>
             </div>
           </div>
